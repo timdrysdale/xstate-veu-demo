@@ -1,9 +1,11 @@
 <script setup>
-import FetchDemo from './components/FetchDemo.vue'
+  import FetchDemo from './components/FetchDemo.vue'
+  import Toggle from './components/Toggle.vue'
 </script>
 
 <template>
-  <FetchDemo />
+<FetchDemo />
+<Toggle/>
 </template>
 
 <style scoped>
