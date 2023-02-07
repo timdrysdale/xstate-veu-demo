@@ -1,11 +1,13 @@
 <script setup>
   import FetchDemo from './components/FetchDemo.vue'
   import Toggle from './components/Toggle.vue'
+  import ParentChild from './components/ParentChild.vue'
 </script>
 
 <template>
 <FetchDemo />
 <Toggle/>
+<ParentChild />
 </template>
 
 <style scoped>
