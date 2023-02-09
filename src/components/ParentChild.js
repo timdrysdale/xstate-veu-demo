@@ -4,10 +4,13 @@ import { createMachine, interpret, send, sendParent } from "xstate";
 const minuteMachine = createMachine({
   id: "timer",
   initial: "active",
+  context: {
+    results: "empty child results",
+  },
   states: {
     active: {
       after: {
-        6000: { target: "finished" },
+        1000: { target: "finished" },
       },
     },
     finished: { type: "final" },
@@ -17,6 +20,9 @@ const minuteMachine = createMachine({
 const parentMachine = createMachine({
   id: "parent",
   initial: "pending",
+  context: {
+    results: "empty parent results",
+  },
   states: {
     pending: {
       invoke: {
@@ -55,9 +61,9 @@ export default {
   data() {
     return {
       // Interpret the machine and store it in data
-      ParentChildService: interpret(parentMachine).onTransition((state) =>
-        console.log(state.value)
-      ),
+      ParentChildService: interpret(parentMachine, {
+        devTools: true,
+      }).onTransition((state) => console.log(state.value)),
 
       // Start with the machine's initial state
       current: parentMachine.initialState,

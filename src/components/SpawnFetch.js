@@ -30,7 +30,7 @@ const fetchMachine = createMachine(
       loading: {
         invoke: {
           src: "fetchData",
-          onDone: { target: "success", actions: "handleData" },
+          onDone: { target: "success", actions: "report" },
           onError: { target: "failure" },
         },
         on: {
@@ -39,7 +39,6 @@ const fetchMachine = createMachine(
         },
       },
       success: {
-        entry: "notifySuccess",
         type: "final",
       },
       failure: {
@@ -78,6 +77,10 @@ const fetchMachine = createMachine(
     actions: {
       handleData: assign({ results: (_, event) => event.data }),
       incRetry: assign({ retryCount: (context) => context.retryCount + 1 }),
+      report: sendParent((_, event) => ({
+        type: "RESULTS",
+        data: event.data,
+      })),
     },
     delays: {
       FETCH_DELAY: (context, event) => Math.pow(2.0, context.retryCount) * 500,
@@ -86,7 +89,7 @@ const fetchMachine = createMachine(
 );
 
 const parentMachine = createMachine({
-  id: "parent",
+  id: "spawnParent",
   initial: "pending",
   states: {
     pending: {
@@ -94,7 +97,11 @@ const parentMachine = createMachine({
         src: fetchMachine,
         // The onDone transition will be taken when the
         // minuteMachine has reached its top-level final state.
-        onDone: "timesUp",
+        on: {
+          results: {
+            target: "timesUp",
+          },
+        },
       },
     },
     timesUp: {
@@ -113,7 +120,7 @@ const service = interpret(parentMachine)
 */
 
 export default {
-  name: "ParentChild",
+  name: "SpawnFetch",
   created() {
     // Start service on component creation
     this.ParentChildService.onTransition((state) => {
@@ -126,15 +133,17 @@ export default {
   data() {
     return {
       // Interpret the machine and store it in data
-      ParentChildService: interpret(parentMachine).onTransition((state) =>
-        console.log(state.value)
-      ),
+      ParentChildService: interpret(parentMachine, {
+        devTools: true,
+      }).onTransition((state) => console.log(state.value)),
 
       // Start with the machine's initial state
       current: parentMachine.initialState,
 
       // Start with the machine's initial context
       context: parentMachine.context,
+      //try to store the results somewhere where component can get them?
+      results: {},
     };
   },
   methods: {
