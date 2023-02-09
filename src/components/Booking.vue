@@ -16,6 +16,11 @@
 	<div> g-a selected: {{ context.groupDetails}} </div>
 
   </template>
+ <template v-if="current.value === 'displayGroup'">  
+    <div> Your groups {{ context.groups }}.</div>
+	<div> Your bookings {{ context.bookings }}.</div>
+	<div> g-a selected: {{ context.groupDetails}} </div>
 
+  </template>
 </template>
 <script src="./bookingMachine.js"></script>

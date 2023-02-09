@@ -480,62 +480,41 @@ const bookingMachine = createMachine({
       on: {
         SELECT: {
           target: "selected",
-          actions: assign((context, event) => {
-            // Use the existing groupDetails actor if one already exists
-            let group = context.groupDetails[event.name];
-
-            if (group) {
-              return {
-                ...context,
-                group,
-              };
-            }
-
-            //Otherwise spawn a new groupDetails actor and
-            // save it in the groupDetails object
-            group = spawn(createGroupDetailsMachine(event.name, context.token));
-
-            return {
-              groupDetails: {
-                ...context.groupDetails,
-                [event.name]: group,
-              },
-              group,
-            };
+          actions: assign({
+            group: (context, event) => {
+              //put event name in the group field
+              return event.name;
+            },
           }),
         },
       },
     },
     selected: {
-      on: {
-        SELECT: {
-          target: "selected",
-          actions: assign((context, event) => {
-            // Use the existing groupDetails actor if one already exists
-            let group = context.groupDetails[event.name];
-
-            if (group) {
-              return {
-                ...context,
-                group,
-              };
-            }
-
-            //Otherwise spawn a new groupDetails actor and
-            // save it in the groupDetails object
-            group = spawn(createGroupDetailsMachine(event.name));
-
-            return {
-              groupDetails: {
-                ...context.groupDetails,
-                [event.name]: group,
-              },
-              group,
-            };
+      invoke: {
+        src: fetchMachine,
+        data: {
+          path: (context, event) =>
+            import.meta.env.VITE_APP_BOOK_SERVER +
+            "/api/v1/groups/" +
+            context.group,
+          method: "GET",
+          token: (context, event) => context.token,
+        },
+        onDone: {
+          target: "displayGroup",
+          actions: assign({
+            groupDetails: (context, event) => {
+              return event.data;
+            },
           }),
+        },
+        onError: {
+          target: "terminated",
         },
       },
     },
+    displayGroup: {},
+
     terminated: {
       type: "final",
     },
