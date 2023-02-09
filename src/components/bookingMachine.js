@@ -351,6 +351,7 @@ const bookingMachine = createMachine({
   id: "bookingMachine",
   initial: "login",
   context: {
+    bookings: "",
     userName: "",
     token: "",
     groups: "",
@@ -361,7 +362,7 @@ const bookingMachine = createMachine({
       invoke: {
         src: loginMachine,
         onDone: {
-          target: "loginDone",
+          target: "bookings",
           actions: assign({
             groups: (context, event) => {
               return event.data.groups;
@@ -379,9 +380,32 @@ const bookingMachine = createMachine({
         },
       },
     },
-    loginDone: {
-      on: {}, //wait here forever (TODO - add more stuff!)
+    bookings: {
+      invoke: {
+        src: fetchMachine,
+        data: {
+          path: (context, event) =>
+            import.meta.env.VITE_APP_BOOK_SERVER +
+            "/api/v1/users/" +
+            context.userName +
+            "/bookings",
+          method: "GET",
+          token: (context, event) => context.token,
+        },
+        onDone: {
+          target: "idle",
+          actions: assign({
+            bookings: (context, event) => {
+              return event.data;
+            },
+          }),
+        },
+        onError: {
+          target: "terminated",
+        },
+      },
     },
+    idle: {},
     terminated: {
       type: "final",
     },
