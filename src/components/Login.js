@@ -1,18 +1,5 @@
 import { assign, createMachine, interpret, send, sendParent } from "xstate";
-// Invoked child machine
-/*const minuteMachine = createMachine({
-  id: "timer",
-  initial: "active",
-  states: {
-    active: {
-      after: {
-        6000: { target: "finished" },
-      },
-    },
-    finished: { type: "final" },
-  },
-});
-*/
+
 const getUserLocally = (context, event) =>
   new Promise((resolve, reject) => {
     var userName = localStorage.getItem("userName", false);
@@ -298,7 +285,7 @@ const parentMachine = createMachine({
           target: "loginDone",
           actions: assign({
             groups: (context, event) => {
-              return event.data;
+              return event.data.results.groups;
             },
           }),
         },

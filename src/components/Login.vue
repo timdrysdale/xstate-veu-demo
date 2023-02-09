@@ -1,15 +1,19 @@
 <template>
-  <template v-if="current.value === 'pending'">
-    <div>Pending...</div>
+  <template v-if="current.value === 'userLocal'">
+    <div>Checking for pre-existing userName ...</div>
   </template>
-
-  <template v-else-if="current.value  === 'loginDone'">
-	<div> UserLocal: {{ context.userLocal }} </div>
-    <div> UserRemote: {{ context.userRemote }} </div>
-	<div> UserName: {{ context.userName }} </div>
-	<div> Token: {{ context.token }} </div>
-	<div> Groups: {{ context.groups.results.groups }} </div>	
+  <template v-if="current.value === 'userRemote'">
+    <div>Getting a new userName ...</div>
   </template>
+  <template v-if="current.value === 'Login'">
+    <div> Getting a login token for  {{ context.userName }} ...</div>
+  </template>
+  <template v-if="current.value === 'addDefaultGroup'">
+    <div> Ensuring access to default group {{ context.defaultGroup }} ...</div>
+  </template>
+   <template v-if="current.value === 'loginDone'">
+    <div> You have access to the following groups {{ context.groups }}.</div>
+  </template> 
 
 </template>
 <script src="./Login.js"></script>
