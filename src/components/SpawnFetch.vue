@@ -4,7 +4,7 @@
   </template>
 
   <template v-else-if="current.value  === 'timesUp'">
-    <div> {{ results }}</div>
+    <div> Done: {{ context.result }} {{ context.results.user_name }}</div>
   </template>
 
 </template>

@@ -6,17 +6,12 @@ const minuteMachine = createMachine({
   initial: "active",
   context: {
     secret: 42,
-    results: "empty child results",
   },
   states: {
     active: {
       after: {
         1000: {
           target: "finished",
-          actions: sendParent((context, event) => ({
-            type: "RESULTS",
-            results: "my results",
-          })),
         },
       },
     },
@@ -34,7 +29,6 @@ const parentMachine = createMachine({
   initial: "pending",
   context: {
     revealedSecret: undefined,
-    results: "empty parent results",
   },
   states: {
     pending: {
@@ -55,11 +49,6 @@ const parentMachine = createMachine({
     },
     timesUp: {
       type: "final",
-    },
-  },
-  actions: {
-    assignResults: (c, e) => {
-      this.context.results = e.data;
     },
   },
 });

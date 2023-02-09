@@ -23,23 +23,23 @@ const fetchMachine = createMachine(
       path: import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/users/unique",
       method: "POST",
       token: "",
-      results: [],
+      results: "FOO",
       retryCount: 0,
     },
     states: {
       loading: {
         invoke: {
           src: "fetchData",
-          onDone: { target: "success", actions: "report" },
+          onDone: { target: "success", actions: "handleData" },
           onError: { target: "failure" },
-        },
-        on: {
-          RESOLVE: "success",
-          REJECT: "failure",
         },
       },
       success: {
         type: "final",
+        data: (context, event) => ({
+          results: context.results,
+          result: "success",
+        }),
       },
       failure: {
         on: {
@@ -58,7 +58,13 @@ const fetchMachine = createMachine(
           FETCH_DELAY: "loading",
         },
       },
-      terminated: {},
+      terminated: {
+        type: "final",
+        data: (context, event) => ({
+          results: context.results,
+          result: "terminated",
+        }),
+      },
     },
   },
   {
@@ -77,10 +83,6 @@ const fetchMachine = createMachine(
     actions: {
       handleData: assign({ results: (_, event) => event.data }),
       incRetry: assign({ retryCount: (context) => context.retryCount + 1 }),
-      report: sendParent((_, event) => ({
-        type: "RESULTS",
-        data: event.data,
-      })),
     },
     delays: {
       FETCH_DELAY: (context, event) => Math.pow(2.0, context.retryCount) * 500,
@@ -91,16 +93,27 @@ const fetchMachine = createMachine(
 const parentMachine = createMachine({
   id: "spawnParent",
   initial: "pending",
+  context: {
+    results: "no results",
+    result: "no result",
+  },
   states: {
     pending: {
       invoke: {
         src: fetchMachine,
         // The onDone transition will be taken when the
         // minuteMachine has reached its top-level final state.
-        on: {
-          results: {
-            target: "timesUp",
-          },
+        devTools: true,
+        onDone: {
+          target: "timesUp",
+          actions: assign({
+            results: (context, event) => {
+              return event.data.results;
+            },
+            result: (context, event) => {
+              return event.data.result;
+            },
+          }),
         },
       },
     },
