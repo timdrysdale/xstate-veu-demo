@@ -4,8 +4,10 @@
   </template>
 
   <template v-else-if="current.value  === 'timesUp'">
-    <div> Done: {{ context.userResult }} {{ context.userResults.user_name}}</div>
-	<div> Done: {{ context.loginResult }} {{ context.loginResults.token }}</div>
+	<div> UserLocal: {{ context.userLocal }} </div>
+    <div> UserRemote: {{ context.userRemote }} </div>
+	<div> UserName: {{ context.userName }} </div>
+	<div> Token: {{ context.token }} </div>
   </template>
 
 </template>

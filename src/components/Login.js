@@ -13,6 +13,19 @@ import { assign, createMachine, interpret, send, sendParent } from "xstate";
   },
 });
 */
+const getUserLocally = (context, event) =>
+  new Promise((resolve, reject) => {
+    var userName = localStorage.getItem("userName", false);
+    console.log("userName", userName);
+    if (userName == null) {
+      return reject("no userName found");
+    }
+    if (userName == "") {
+      return reject("no userName found");
+    }
+
+    return resolve({ status: "ok", userName: userName });
+  });
 
 const fetchMachine = createMachine(
   {
@@ -91,43 +104,69 @@ const fetchMachine = createMachine(
 );
 
 const parentMachine = createMachine({
-  id: "spawnParent",
-  initial: "pending",
+  id: "loginParent",
+  initial: "userLocal",
   context: {
-    userResults: "no results",
-    userResult: "no result",
-    loginResult: "no result",
-    loginResults: "no results",
+    userLocal: "-",
+    userRemote: "-",
+    userName: "not known",
+    login: "-",
   },
   states: {
-    pending: {
+    userLocal: {
+      invoke: {
+        src: getUserLocally,
+        onDone: {
+          target: "login",
+          actions: assign({
+            userLocal: (context, event) => {
+              return event.data;
+            },
+            userName: (context, event) => {
+              return event.data.userName;
+            },
+          }),
+        },
+        onError: {
+          target: "userRemote",
+        },
+      },
+    },
+
+    userRemote: {
       invoke: {
         src: fetchMachine,
+        data: {
+          path: (context, event) =>
+            import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/users/unique",
+          method: "POST",
+        },
         // The onDone transition will be taken when the
         // minuteMachine has reached its top-level final state.
         devTools: true,
         onDone: {
           target: "login",
           actions: assign({
-            userResults: (context, event) => {
-              return event.data.results;
+            userRemote: (context, event) => {
+              return event.data;
             },
-            userResult: (context, event) => {
-              return event.data.result;
+            userName: (context, event) => {
+              return event.data.results.user_name;
             },
           }),
         },
         onError: {},
       },
     },
+
     login: {
       invoke: {
         src: fetchMachine,
         data: {
           path: (context, event) =>
             import.meta.env.VITE_APP_BOOK_SERVER +
-            "/api/v1/login/unique" +
-            context.userResults.user_name,
+            "/api/v1/login/" +
+            context.userName,
           method: "POST",
         },
 
@@ -137,11 +176,11 @@ const parentMachine = createMachine({
         onDone: {
           target: "timesUp",
           actions: assign({
-            loginResults: (context, event) => {
-              return event.data.results;
+            login: (context, event) => {
+              return event.data;
             },
-            loginResult: (context, event) => {
-              return event.data.result;
+            token: (context, event) => {
+              return event.data.results.token;
             },
           }),
         },
@@ -164,7 +203,7 @@ const service = interpret(parentMachine)
 */
 
 export default {
-  name: "SpawnFetch",
+  name: "LoginParent",
   created() {
     // Start service on component creation
     this.ParentChildService.onTransition((state) => {
