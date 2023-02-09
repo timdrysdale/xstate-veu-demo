@@ -1,4 +1,11 @@
-import { assign, createMachine, interpret, send, sendParent } from "xstate";
+import {
+  assign,
+  createMachine,
+  interpret,
+  send,
+  spawn,
+  sendParent,
+} from "xstate";
 
 const getUserLocally = (context, event) =>
   new Promise((resolve, reject) => {
@@ -347,6 +354,69 @@ const loginMachine = createMachine({
   },
 });
 
+function invokeFetchGroupDetails(context) {
+  const { group, token } = context;
+
+  /* TODO use state machine for this fetch as well ...?!
+  const machine = fetchMachine.withContext({
+    method: "GET",
+    path: import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/groups/" + group,
+    token: token,
+  });
+
+  return interpret(machine).onTransition((state) => {
+    console.log(state.value);
+	});*/
+  return fetch(
+    import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/groups/" + group,
+    {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    }
+  ).then((res) => res.json());
+}
+
+const createGroupDetailsMachine = (group, token) => {
+  return createMachine({
+    id: "group",
+    initial: "loading",
+    context: {
+      group, // group name passed in
+      token, //token passed in
+      details: null,
+      lastUpdated: null,
+    },
+    states: {
+      loading: {
+        invoke: {
+          id: "fetchGroupDetails",
+          src: invokeFetchGroupDetails,
+          onDone: {
+            target: "loaded",
+            actions: assign({
+              details: (_, event) => event.data,
+              lastUpdated: () => Date.now(),
+            }),
+          },
+          onError: "failure",
+        },
+      },
+      loaded: {
+        on: {
+          REFRESH: "loading",
+        },
+      },
+      failure: {
+        on: {
+          RETRY: "loading",
+        },
+      },
+    },
+  });
+};
+
 const bookingMachine = createMachine({
   id: "bookingMachine",
   initial: "login",
@@ -354,8 +424,9 @@ const bookingMachine = createMachine({
     bookings: "",
     userName: "",
     token: "",
-    groups: "",
-    groupDetails: {},
+    groups: [], //groups we can choose from (includes description)
+    group: null, //name of currently selected group
+    groupDetails: {}, //subMachines see https://xstate.js.org/docs/tutorials/reddit.html#spawning-subreddit-actors
   },
   states: {
     login: {
@@ -405,7 +476,66 @@ const bookingMachine = createMachine({
         },
       },
     },
-    idle: {},
+    idle: {
+      on: {
+        SELECT: {
+          target: "selected",
+          actions: assign((context, event) => {
+            // Use the existing groupDetails actor if one already exists
+            let group = context.groupDetails[event.name];
+
+            if (group) {
+              return {
+                ...context,
+                group,
+              };
+            }
+
+            //Otherwise spawn a new groupDetails actor and
+            // save it in the groupDetails object
+            group = spawn(createGroupDetailsMachine(event.name, context.token));
+
+            return {
+              groupDetails: {
+                ...context.groupDetails,
+                [event.name]: group,
+              },
+              group,
+            };
+          }),
+        },
+      },
+    },
+    selected: {
+      on: {
+        SELECT: {
+          target: "selected",
+          actions: assign((context, event) => {
+            // Use the existing groupDetails actor if one already exists
+            let group = context.groupDetails[event.name];
+
+            if (group) {
+              return {
+                ...context,
+                group,
+              };
+            }
+
+            //Otherwise spawn a new groupDetails actor and
+            // save it in the groupDetails object
+            group = spawn(createGroupDetailsMachine(event.name));
+
+            return {
+              groupDetails: {
+                ...context.groupDetails,
+                [event.name]: group,
+              },
+              group,
+            };
+          }),
+        },
+      },
+    },
     terminated: {
       type: "final",
     },
