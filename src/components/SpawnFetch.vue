@@ -8,4 +8,4 @@
   </template>
 
 </template>
-<script src="./ParentChild.js"></script>
+<script src="./SpawnFetch.js"></script>

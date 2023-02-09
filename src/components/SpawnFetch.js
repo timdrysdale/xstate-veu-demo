@@ -1,7 +1,6 @@
-import { createMachine, interpret, send, sendParent } from "xstate";
-
+import { assign, createMachine, interpret, send, sendParent } from "xstate";
 // Invoked child machine
-const minuteMachine = createMachine({
+/*const minuteMachine = createMachine({
   id: "timer",
   initial: "active",
   states: {
@@ -13,6 +12,78 @@ const minuteMachine = createMachine({
     finished: { type: "final" },
   },
 });
+*/
+
+const fetchMachine = createMachine(
+  {
+    predictableActionArguments: true, //https://xstate.js.org/docs/guides/actions.html
+    id: "fetch",
+    initial: "loading",
+    context: {
+      path: import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/users/unique",
+      method: "POST",
+      token: "",
+      results: [],
+      retryCount: 0,
+    },
+    states: {
+      loading: {
+        invoke: {
+          src: "fetchData",
+          onDone: { target: "success", actions: "handleData" },
+          onError: { target: "failure" },
+        },
+        on: {
+          RESOLVE: "success",
+          REJECT: "failure",
+        },
+      },
+      success: {
+        entry: "notifySuccess",
+        type: "final",
+      },
+      failure: {
+        on: {
+          always: [
+            {
+              target: "awaitingRetry",
+              actions: "incRetry",
+              cond: "withinLimit",
+            },
+            { target: "terminated" },
+          ],
+        },
+      },
+      awaitingRetry: {
+        after: {
+          FETCH_DELAY: "loading",
+        },
+      },
+      terminated: {},
+    },
+  },
+  {
+    services: {
+      fetchData: (_context, event) =>
+        fetch(_context.path, {
+          method: _context.method,
+          headers: {
+            Authorization: _context.token,
+          },
+        }).then((res) => res.json()),
+    },
+    guards: {
+      withinLimit: (context) => context.retryCount < 5,
+    },
+    actions: {
+      handleData: assign({ results: (_, event) => event.data }),
+      incRetry: assign({ retryCount: (context) => context.retryCount + 1 }),
+    },
+    delays: {
+      FETCH_DELAY: (context, event) => Math.pow(2.0, context.retryCount) * 500,
+    },
+  }
+);
 
 const parentMachine = createMachine({
   id: "parent",
@@ -20,7 +91,7 @@ const parentMachine = createMachine({
   states: {
     pending: {
       invoke: {
-        src: minuteMachine,
+        src: fetchMachine,
         // The onDone transition will be taken when the
         // minuteMachine has reached its top-level final state.
         onDone: "timesUp",
