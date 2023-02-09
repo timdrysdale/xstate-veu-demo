@@ -173,8 +173,8 @@ const fetchMachine = createMachine(
   }
 );
 
-const parentMachine = createMachine({
-  id: "loginParent",
+const loginMachine = createMachine({
+  id: "loginMachine",
   initial: "userLocal",
   context: {
     userLocal: "-",
@@ -347,20 +347,52 @@ const parentMachine = createMachine({
   },
 });
 
-/*
-const service = interpret(parentMachine)
-  .onTransition((state) => console.log(state.value))
-  .start();
-// => 'pending'
-// ... after 6 seconds
-// => 'timesUp'
-*/
+const bookingMachine = createMachine({
+  id: "bookingMachine",
+  initial: "login",
+  context: {
+    userName: "",
+    token: "",
+    groups: "",
+    groupDetails: {},
+  },
+  states: {
+    login: {
+      invoke: {
+        src: loginMachine,
+        onDone: {
+          target: "loginDone",
+          actions: assign({
+            groups: (context, event) => {
+              return event.data.groups;
+            },
+            token: (context, event) => {
+              return event.data.token;
+            },
+            userName: (context, event) => {
+              return event.data.userName;
+            },
+          }),
+        },
+        onError: {
+          target: "terminated",
+        },
+      },
+    },
+    loginDone: {
+      on: {}, //wait here forever (TODO - add more stuff!)
+    },
+    terminated: {
+      type: "final",
+    },
+  },
+});
 
 export default {
-  name: "LoginParent",
+  name: "Booking",
   created() {
     // Start service on component creation
-    this.ParentChildService.onTransition((state) => {
+    this.BookingService.onTransition((state) => {
       // Update the current state component data property with the next state
       this.current = state;
       // Update the context component data property with the updated context
@@ -370,15 +402,15 @@ export default {
   data() {
     return {
       // Interpret the machine and store it in data
-      ParentChildService: interpret(parentMachine, {
+      BookingService: interpret(bookingMachine, {
         devTools: true,
       }).onTransition((state) => console.log(state.value)),
 
       // Start with the machine's initial state
-      current: parentMachine.initialState,
+      current: bookingMachine.initialState,
 
       // Start with the machine's initial context
-      context: parentMachine.context,
+      context: bookingMachine.context,
       //try to store the results somewhere where component can get them?
       results: {},
     };
@@ -386,7 +418,7 @@ export default {
   methods: {
     // Send events to the service
     send(event) {
-      this.ParentChildService.send(event);
+      this.BookingService.send(event);
     },
   },
 };

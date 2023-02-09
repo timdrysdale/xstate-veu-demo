@@ -1,9 +1,11 @@
 <script setup>
   import Login from './components/Login.vue'
+  import Booking from './components/Booking.vue'
 </script>
 
 <template>
 <Login />
+<Booking />
 </template>
 
 <style scoped>
