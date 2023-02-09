@@ -36,10 +36,84 @@ const storeUserLocally = (context, event) =>
     return resolve();
   });
 
+const noContentMachine = createMachine(
+  {
+    predictableActionArguments: true, //https://xstate.js.org/docs/guides/actions.html
+    id: "loginNoContentFetch",
+    initial: "loading",
+    context: {
+      path: import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/", //this routing is incomplete.
+      method: "POST",
+      token: "",
+      retryCount: 0,
+    },
+    states: {
+      loading: {
+        invoke: {
+          src: "fetchNoData",
+          onDone: { target: "success" },
+          onError: { target: "failure" },
+        },
+      },
+      success: {
+        type: "final",
+        data: (context, event) => ({
+          results: context.results,
+          result: "success",
+        }),
+      },
+      failure: {
+        on: {
+          always: [
+            {
+              target: "awaitingRetry",
+              actions: "incRetry",
+              cond: "withinLimit",
+            },
+            { target: "terminated" },
+          ],
+        },
+      },
+      awaitingRetry: {
+        after: {
+          FETCH_DELAY: "loading",
+        },
+      },
+      terminated: {
+        type: "final",
+        data: (context, event) => ({
+          results: context.results,
+          result: "terminated",
+        }),
+      },
+    },
+  },
+  {
+    services: {
+      fetchNoData: (_context, event) =>
+        fetch(_context.path, {
+          method: _context.method,
+          headers: {
+            Authorization: _context.token,
+          },
+        }), //don't process any JSON here, as no content expected
+    },
+    guards: {
+      withinLimit: (context) => context.retryCount < 5,
+    },
+    actions: {
+      incRetry: assign({ retryCount: (context) => context.retryCount + 1 }),
+    },
+    delays: {
+      FETCH_DELAY: (context, event) => Math.pow(2.0, context.retryCount) * 500,
+    },
+  }
+);
+
 const fetchMachine = createMachine(
   {
     predictableActionArguments: true, //https://xstate.js.org/docs/guides/actions.html
-    id: "user",
+    id: "loginFetch",
     initial: "loading",
     context: {
       path: import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/users/unique",
@@ -120,6 +194,9 @@ const parentMachine = createMachine({
     userRemote: "-",
     userName: "not known",
     login: "-",
+    groups: "-",
+    defaultGroup: "g-a",
+    defaultGroupAddedStatus: undefined,
   },
   states: {
     userLocal: {
@@ -150,8 +227,6 @@ const parentMachine = createMachine({
             import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/users/unique",
           method: "POST",
         },
-        // The onDone transition will be taken when the
-        // minuteMachine has reached its top-level final state.
         devTools: true,
         onDone: {
           target: "storeUser",
@@ -191,11 +266,9 @@ const parentMachine = createMachine({
           method: "POST",
         },
 
-        // The onDone transition will be taken when the
-        // minuteMachine has reached its top-level final state.
         devTools: true,
         onDone: {
-          target: "timesUp",
+          target: "addDefaultGroup",
           actions: assign({
             login: (context, event) => {
               return event.data;
@@ -208,11 +281,75 @@ const parentMachine = createMachine({
         onError: {},
       },
     },
+    groups: {
+      invoke: {
+        src: fetchMachine,
+        data: {
+          path: (context, event) =>
+            import.meta.env.VITE_APP_BOOK_SERVER +
+            "/api/v1/users/" +
+            context.userName +
+            "/groups",
+          method: "GET",
+          token: (context, event) => context.token,
+        },
+        devTools: true,
+        onDone: {
+          target: "loginDone",
+          actions: assign({
+            groups: (context, event) => {
+              return event.data;
+            },
+          }),
+        },
+        onError: {
+          target: "addDefaultGroup",
+        },
+      },
+    },
+    addDefaultGroup: {
+      invoke: {
+        src: noContentMachine,
+        data: {
+          id: "addDefaultGroup",
+          path: (context, event) =>
+            import.meta.env.VITE_APP_BOOK_SERVER +
+            "/api/v1/users/" +
+            context.userName +
+            "/groups/" +
+            context.defaultGroup,
+          method: "POST",
+          token: (context, event) => context.token,
+        },
+        devTools: true,
+        onDone: {
+          target: "groups",
+          actions: assign({
+            defaultGroupAddedStatus: (context, event) => {
+              return true;
+            },
+          }),
+        },
+        onError: {
+          target: "noGroups",
+          actions: assign({
+            defaultGroupAddedStatus: (context, event) => {
+              return false;
+            },
+          }),
+        },
+      },
+    },
+
     noFuture: {
       //can't store user locally so future bookings might be lost
       type: "final",
     },
-    timesUp: {
+    noGroups: {
+      // no groups, so nothing can be booked at the moment - need to add groups
+      type: "final",
+    },
+    loginDone: {
       type: "final",
     },
   },
