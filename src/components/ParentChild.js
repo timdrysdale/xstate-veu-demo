@@ -1,19 +1,31 @@
-import { createMachine, interpret, send, sendParent } from "xstate";
+import { assign, createMachine, interpret, send, sendParent } from "xstate";
 
 // Invoked child machine
 const minuteMachine = createMachine({
   id: "timer",
   initial: "active",
   context: {
+    secret: 42,
     results: "empty child results",
   },
   states: {
     active: {
       after: {
-        1000: { target: "finished" },
+        1000: {
+          target: "finished",
+          actions: sendParent((context, event) => ({
+            type: "RESULTS",
+            results: "my results",
+          })),
+        },
       },
     },
-    finished: { type: "final" },
+    finished: {
+      type: "final",
+      data: (context, event) => ({
+        secret: context.secret,
+      }),
+    },
   },
 });
 
@@ -21,6 +33,7 @@ const parentMachine = createMachine({
   id: "parent",
   initial: "pending",
   context: {
+    revealedSecret: undefined,
     results: "empty parent results",
   },
   states: {
@@ -29,11 +42,24 @@ const parentMachine = createMachine({
         src: minuteMachine,
         // The onDone transition will be taken when the
         // minuteMachine has reached its top-level final state.
-        onDone: "timesUp",
+        devTools: true,
+        onDone: {
+          target: "timesUp",
+          actions: assign({
+            revealedSecret: (context, event) => {
+              return event.data.secret;
+            },
+          }),
+        },
       },
     },
     timesUp: {
       type: "final",
+    },
+  },
+  actions: {
+    assignResults: (c, e) => {
+      this.context.results = e.data;
     },
   },
 });
