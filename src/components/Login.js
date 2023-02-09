@@ -27,6 +27,15 @@ const getUserLocally = (context, event) =>
     return resolve({ status: "ok", userName: userName });
   });
 
+const storeUserLocally = (context, event) =>
+  new Promise((resolve, reject) => {
+    var userName = localStorage.setItem("userName", context.userName);
+
+    console.log("stored userName", context.userName);
+
+    return resolve();
+  });
+
 const fetchMachine = createMachine(
   {
     predictableActionArguments: true, //https://xstate.js.org/docs/guides/actions.html
@@ -145,7 +154,7 @@ const parentMachine = createMachine({
         // minuteMachine has reached its top-level final state.
         devTools: true,
         onDone: {
-          target: "login",
+          target: "storeUser",
           actions: assign({
             userRemote: (context, event) => {
               return event.data;
@@ -156,6 +165,18 @@ const parentMachine = createMachine({
           }),
         },
         onError: {},
+      },
+    },
+
+    storeUser: {
+      invoke: {
+        src: storeUserLocally,
+        onDone: {
+          target: "login",
+        },
+        onError: {
+          target: "noFuture",
+        },
       },
     },
 
@@ -186,6 +207,10 @@ const parentMachine = createMachine({
         },
         onError: {},
       },
+    },
+    noFuture: {
+      //can't store user locally so future bookings might be lost
+      type: "final",
     },
     timesUp: {
       type: "final",
