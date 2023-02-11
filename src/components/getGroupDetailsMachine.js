@@ -1,66 +1,34 @@
 import { assign, createMachine } from "xstate";
 
-// This is not currently used!
-
-function invokeFetchGroupDetails(context) {
-  const { group, token } = context;
-
-  /* TODO use state machine for this fetch as well ...?!
-  const machine = fetchMachine.withContext({
-    method: "GET",
-    path: import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/groups/" + group,
-    token: token,
+function hasSameProps(obj1, obj2) {
+  return Object.keys(obj1).every(function (prop) {
+    return obj2.hasOwnProperty(prop);
   });
+}
 
-  return interpret(machine).onTransition((state) => {
-    console.log(state.value);
-	});*/
-  return fetch(
-    import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/groups/" + group,
-    {
-      method: "GET",
-      headers: {
-        Authorization: token,
-      },
+const getGroupDetails = (context, event) =>
+  new Promise((resolve, reject) => {
+    var groupDetails = {};
+
+    for (const group in context.groups) {
+      fetch(import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/groups/" + group, {
+        method: "GET",
+        headers: {
+          Authorization: context.token,
+        },
+      })
+        .then((res) => res.json())
+        .then((details) => {
+          groupDetails[group] = details;
+        });
     }
-  ).then((res) => res.json());
-}
 
-export default function (group, token) {
-  return createMachine({
-    id: "group",
-    initial: "loading",
-    context: {
-      group, // group name passed in
-      token, //token passed in
-      details: null,
-      lastUpdated: null,
-    },
-    states: {
-      loading: {
-        invoke: {
-          id: "fetchGroupDetails",
-          src: invokeFetchGroupDetails,
-          onDone: {
-            target: "loaded",
-            actions: assign({
-              details: (_, event) => event.data,
-              lastUpdated: () => Date.now(),
-            }),
-          },
-          onError: "failure",
-        },
-      },
-      loaded: {
-        on: {
-          REFRESH: "loading",
-        },
-      },
-      failure: {
-        on: {
-          RETRY: "loading",
-        },
-      },
-    },
+    if (hasSameProps(obj1, obj2)) {
+      return resolve({ status: "ok", groupDetails: groupDetails });
+    } else {
+      return reject({
+        status: "incomplete",
+        groupDetails: groupDetails,
+      });
+    }
   });
-}
