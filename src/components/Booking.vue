@@ -31,6 +31,10 @@
 	<h4> Your policies </h4>
 	<li v-for="policy in context.policies">
 	  {{ policy.description.name }} : {{ policy.description.short }}
+	</li>
+	<h4> Your slots </h4>
+	<li v-for="slot in context.slots">
+	  {{ slot }} 
 	</li>	
   </template> 
    

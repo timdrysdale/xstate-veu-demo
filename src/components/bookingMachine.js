@@ -11,6 +11,8 @@ import fetchMachine from "./fetchMachine.js";
 import loginMachine from "./loginMachine.js";
 import getGroupDetails from "./getGroupDetails.js";
 import aggregatePolicies from "./aggregatePolicies.js";
+import aggregateSlots from "./aggregateSlots.js";
+
 const bookingMachine = createMachine({
   id: "bookingMachine",
   initial: "login",
@@ -21,6 +23,9 @@ const bookingMachine = createMachine({
     groups: {}, //groups we can choose from (includes description)
     group: null, //name of currently selected group
     groupDetails: {}, //subMachines see https://xstate.js.org/docs/tutorials/reddit.html#spawning-subreddit-actors
+    policies: {},
+    slots: [],
+    slotDetails: {},
   },
   states: {
     login: {
@@ -94,7 +99,7 @@ const bookingMachine = createMachine({
       invoke: {
         src: aggregatePolicies,
         onDone: {
-          target: "idle",
+          target: "slots",
           actions: assign({
             policies: (context, event) => {
               return event.data.policies;
@@ -106,6 +111,23 @@ const bookingMachine = createMachine({
         },
       },
     },
+    slots: {
+      invoke: {
+        src: aggregateSlots,
+        onDone: {
+          target: "idle",
+          actions: assign({
+            slots: (context, event) => {
+              return event.data.slots;
+            },
+          }),
+        },
+        onError: {
+          target: "idle", //TODO figure out what to do here if error
+        },
+      },
+    },
+
     idle: {
       on: {
         SELECT: {
