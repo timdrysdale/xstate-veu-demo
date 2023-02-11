@@ -1,7 +1,8 @@
 export default function (context, event) {
   let promises = [];
-
+  let names = [];
   for (const group in context.groups) {
+    names.push(group);
     promises.push(
       fetch(import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/groups/" + group, {
         method: "GET",
@@ -14,7 +15,12 @@ export default function (context, event) {
 
   return Promise.all(promises).then((values) => {
     return new Promise((resolve, reject) => {
-      resolve({ status: "ok", groupDetails: values });
+      var groupDetails = {};
+      names.forEach(function (item, index) {
+        groupDetails[item] = values[index];
+      });
+
+      resolve({ status: "ok", groupDetails: groupDetails });
     });
   });
 }
