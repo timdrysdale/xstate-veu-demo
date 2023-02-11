@@ -189,7 +189,7 @@ const loginMachine = createMachine({
     userName: "not known",
     login: "-",
     groups: "-",
-    defaultGroup: "g-a",
+    defaultGroup: "g-everyone",
     defaultGroupAddedStatus: undefined,
   },
   states: {
