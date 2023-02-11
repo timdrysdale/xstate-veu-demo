@@ -1,5 +1,5 @@
 export default function (context, event) {
-  new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     var groupDetails = {};
 
     for (const group in context.groups) {
