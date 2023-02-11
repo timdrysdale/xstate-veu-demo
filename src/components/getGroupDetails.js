@@ -1,3 +1,24 @@
+export default function (context, event) {
+  let promises = [];
+
+  for (const group in context.groups) {
+    promises.push(
+      fetch(import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/groups/" + group, {
+        method: "GET",
+        headers: {
+          Authorization: context.token,
+        },
+      }).then((res) => res.json())
+    );
+  }
+
+  return Promise.all(promises).then((values) => {
+    return new Promise((resolve, reject) => {
+      resolve({ status: "ok", groupDetails: values });
+    });
+  });
+}
+
 /* export default function (context, event) {
   return new Promise((resolve, reject) => {
     const data = { a: "a", b: "b" };
@@ -28,6 +49,7 @@ export default function (context, event) {
 }
 */
 
+/*
 export default function (context, event) {
   let group = "g-everyone"; //TODO just for test
 
@@ -57,4 +79,4 @@ export default function (context, event) {
       resolve({ status: "ok", groupDetails: values });
     });
   });
-}
+}*/
