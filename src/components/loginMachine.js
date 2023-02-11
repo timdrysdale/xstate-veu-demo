@@ -29,12 +29,13 @@ export default createMachine({
   id: "loginMachine",
   initial: "userLocal",
   context: {
+    secondGroup: "",
     userLocal: "-",
     userRemote: "-",
     userName: "not known",
     login: "-",
     groups: "-",
-    defaultGroup: "g-everyone",
+    defaultGroup: "",
     defaultGroupAddedStatus: undefined,
   },
   states: {
@@ -137,7 +138,7 @@ export default createMachine({
           target: "loginDone",
           actions: assign({
             groups: (context, event) => {
-              return event.data.results.groups;
+              return event.data.results;
             },
           }),
         },
@@ -157,6 +158,39 @@ export default createMachine({
             context.userName +
             "/groups/" +
             context.defaultGroup,
+          method: "POST",
+          token: (context, event) => context.token,
+        },
+        devTools: true,
+        onDone: {
+          target: "addSecondGroup",
+          actions: assign({
+            defaultGroupAddedStatus: (context, event) => {
+              return true;
+            },
+          }),
+        },
+        onError: {
+          target: "noGroups",
+          actions: assign({
+            defaultGroupAddedStatus: (context, event) => {
+              return false;
+            },
+          }),
+        },
+      },
+    },
+    addSecondGroup: {
+      invoke: {
+        src: noContentMachine,
+        data: {
+          id: "addSecondGroup",
+          path: (context, event) =>
+            import.meta.env.VITE_APP_BOOK_SERVER +
+            "/api/v1/users/" +
+            context.userName +
+            "/groups/" +
+            context.secondGroup,
           method: "POST",
           token: (context, event) => context.token,
         },

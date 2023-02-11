@@ -25,6 +25,10 @@ const bookingMachine = createMachine({
     login: {
       invoke: {
         src: loginMachine,
+        data: {
+          defaultGroup: "g-everyone",
+          secondGroup: "g-engdes1-lab", //TODO get from query rather than hardcoding
+        },
         onDone: {
           target: "bookings",
           actions: assign({
@@ -57,7 +61,7 @@ const bookingMachine = createMachine({
           token: (context, event) => context.token,
         },
         onDone: {
-          target: "idle",
+          target: "groups",
           actions: assign({
             bookings: (context, event) => {
               return event.data;
@@ -69,6 +73,7 @@ const bookingMachine = createMachine({
         },
       },
     },
+    groups: {},
     idle: {
       on: {
         SELECT: {
