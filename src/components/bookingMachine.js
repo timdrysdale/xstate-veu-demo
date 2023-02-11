@@ -10,7 +10,7 @@ import {
 import fetchMachine from "./fetchMachine.js";
 import loginMachine from "./loginMachine.js";
 import getGroupDetails from "./getGroupDetails.js";
-
+import aggregatePolicies from "./aggregatePolicies.js";
 const bookingMachine = createMachine({
   id: "bookingMachine",
   initial: "login",
@@ -78,10 +78,26 @@ const bookingMachine = createMachine({
       invoke: {
         src: getGroupDetails,
         onDone: {
-          target: "idle",
+          target: "policies",
           actions: assign({
             groupDetails: (context, event) => {
               return event.data.groupDetails;
+            },
+          }),
+        },
+        onError: {
+          target: "idle", //TODO figure out what to do here if error
+        },
+      },
+    },
+    policies: {
+      invoke: {
+        src: aggregatePolicies,
+        onDone: {
+          target: "idle",
+          actions: assign({
+            policies: (context, event) => {
+              return event.data.policies;
             },
           }),
         },
