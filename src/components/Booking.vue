@@ -33,8 +33,9 @@
 	  {{ policy.description.name }} : {{ policy.description.short }}
 	</li>
 	<h4> Your slots </h4>
-	<li v-for="slot in context.slots">
-	  {{ slot.description.name }} :: {{ slot.description.short }} 
+	<li v-for="(slot,key) in context.slots">
+	  {{ slot.description.name }} :: {{ slot.description.short }} <br />
+	  {{ context.available[key] }}
 	</li>	
   </template> 
    
