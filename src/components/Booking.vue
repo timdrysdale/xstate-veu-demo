@@ -34,7 +34,7 @@
 	</li>
 	<h4> Your slots </h4>
 	<li v-for="slot in context.slots">
-	  {{ slot }} 
+	  {{ slot.description.name }} :: {{ slot.description.short }} 
 	</li>	
   </template> 
    

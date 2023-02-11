@@ -25,7 +25,7 @@ const bookingMachine = createMachine({
     groupDetails: {}, //subMachines see https://xstate.js.org/docs/tutorials/reddit.html#spawning-subreddit-actors
     policies: {},
     slots: [],
-    slotDetails: {},
+    availability: {},
   },
   states: {
     login: {
@@ -127,7 +127,22 @@ const bookingMachine = createMachine({
         },
       },
     },
-
+    /*  availability: {
+      invoke: {
+          src: getAvailability,
+        onDone: {
+          target: "idle",
+          actions: assign({
+            slots: (context, event) => {
+              return event.data.slots;
+            },
+          }),
+        },
+        onError: {
+          target: "idle", //TODO figure out what to do here if error
+        },
+      },
+    },*/
     idle: {
       on: {
         SELECT: {
