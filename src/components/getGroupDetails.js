@@ -25,6 +25,8 @@ export default function (context, event) {
   });
 }
 
+// These all work as services - and have increasing complexity.
+
 /* export default function (context, event) {
   return new Promise((resolve, reject) => {
     const data = { a: "a", b: "b" };
