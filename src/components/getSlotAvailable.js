@@ -4,12 +4,19 @@ export default function (context, event) {
   for (const slot in context.slots) {
     names.push(slot);
     promises.push(
-      fetch(import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/slots/" + slot, {
-        method: "GET",
-        headers: {
-          Authorization: context.token,
-        },
-      }).then((res) => res.json())
+      fetch(
+        import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/slots/" + slot,
+        //+new URLSearchParams({  //get just the next available window
+        //  limit: 1,
+        //  offset: 0,
+        // })
+        {
+          method: "GET",
+          headers: {
+            Authorization: context.token,
+          },
+        }
+      ).then((res) => res.json())
     );
   }
 
