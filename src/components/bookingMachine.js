@@ -167,8 +167,8 @@ const bookingMachine = createMachine({
     },
     idle: {
       on: {
-        SELECT: {
-          target: "selected",
+        BOOKING: {
+          target: "booking",
           actions: assign({
             group: (context, event) => {
               //put event name in the group field
@@ -178,6 +178,8 @@ const bookingMachine = createMachine({
         },
       },
     },
+    booking: {},
+
     selected: {
       invoke: {
         src: fetchMachine,

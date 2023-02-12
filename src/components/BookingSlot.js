@@ -3,7 +3,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 export default {
-  props: ["description", "available", "id"], //, "available", "status"],
+  props: ["description", "available", "id", "service"], //, "available", "status"],
   computed: {
     title: function () {
       return this.description.name;
@@ -29,9 +29,9 @@ export default {
     },
   },
   methods: {
-    open() {
-      var path = "/makebooking/" + this.id;
-      this.$router.push({ path: path });
+    makeBooking() {
+      this.service.send("BOOKING");
+      console.log("make booking", this.id);
     },
   },
 };

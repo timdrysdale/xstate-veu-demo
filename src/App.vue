@@ -3,6 +3,7 @@
 </script>
 
 <template>
+<template v-if="false">
   <img width="300" src="https://dev.practable.io/static/images/common/practable-logo-3-1980x660.png">
 
   <div id="nav">
@@ -16,6 +17,11 @@
 	
   <router-view />
 
+</template>
+
+<template v-else>
+<Booking />
+</template>
 </template>
 
 <style>

@@ -1,7 +1,7 @@
 import BookingSlot from "./BookingSlot.vue";
 
 export default {
-  props: ["slots"],
+  props: ["slots", "service"],
   components: {
     BookingSlot,
   },
@@ -28,5 +28,10 @@ export default {
       filter: "",
       disableRefresh: true,
     };
+  },
+  methods: {
+    makeBooking() {
+      this.service.send("BOOKING");
+    },
   },
 };

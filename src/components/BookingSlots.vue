@@ -20,8 +20,14 @@
 	:key="key"
 	:description="slot.description"
 	:available="slot.available"
-	:id="slot.id">
-   </booking-slot>
+	:id="slot.id"
+	:service="service">
+  </booking-slot>
+    		<div class="dropup"> 
+				<button type="button" @click='makeBooking()' class="btn btn-primary" id="book">
+				  Book <span class="caret"></span>
+				</button>
+				</div>
   </div>
 </div>
 </template>

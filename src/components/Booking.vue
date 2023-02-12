@@ -22,10 +22,17 @@
 
   <template v-if="current.value === 'idle'">
   <your-bookings :bookings="context.bookings"> </your-bookings>
-  <booking-slots :slots="context.completeSlots"> </booking-slots>
-
+  <booking-slots :slots="context.completeSlots" :service="BookingService"> </booking-slots>
+  		<div class="dropup"> 
+				<button type="button" @click='send("BOOKING")' class="btn btn-primary" id="book">
+				  Book <span class="caret"></span>
+				</button>
+				</div>
   </template> 
-   
+  <template v-if="current.value === 'booking'">
+YEEEEEEEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAA!!!
+	</template>
+	
   <template v-if="current.value === 'displayGroup'">
 	<div> user: {{ context.userName }} </div>
 	<div> token: {{ context.token }} </div>
