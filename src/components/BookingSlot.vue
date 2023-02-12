@@ -13,6 +13,11 @@
         <h5 class="card-title"> {{ title }}</h5>
         <p class="card-text text-secondary"> {{ what }}</p>
 		<p class="card-text text-secondary"> {{ nextBookable }} </p>
+		<div class="dropup"> 
+				<button type="button" @click="open"  class="btn btn-primary" id="open">
+				  Make Booking <span class="caret"></span>
+				</button>
+				</div>
 	</div>
   </div>	  
   </div>

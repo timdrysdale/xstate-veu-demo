@@ -3,7 +3,19 @@
 </script>
 
 <template>
-<Booking />
+  <img width="300" src="https://dev.practable.io/static/images/common/practable-logo-3-1980x660.png">
+
+  <div id="nav">
+	<router-link to="/">Catalogue</router-link> |
+	<router-link to="/user">User</router-link> |
+	<router-link to="/about">About</router-link> |
+	<router-link to="/cookies">Cookie</router-link>
+	
+  </div>
+ <p style="margin-bottom:0.7cm;"></p>
+	
+  <router-view />
+
 </template>
 
 <style>
