@@ -4,6 +4,7 @@ dayjs.extend(relativeTime);
 
 export default {
   props: ["service", "slot"], //, "available", "status"],
+
   computed: {
     title: function () {
       return this.slot.description.name;
@@ -28,14 +29,25 @@ export default {
       return "Available " + start.fromNow();
     },
   },
+  data() {
+    return {
+      start: "",
+      end: "",
+    };
+  },
   methods: {
     goBack() {
       this.service.send("BACK");
       console.log("go back to catalogue");
     },
     makeBooking() {
-      this.service.send({ type: "REQUESTBOOKING", value: this.slot.id });
-      console.log("go to booking for", this.id);
+      let booking = {
+        id: this.slot.id,
+        start: this.start,
+        end: this.end,
+      };
+      this.service.send({ type: "REQUESTBOOKING", value: booking });
+      console.log("request booking for", booking);
     },
   },
 };

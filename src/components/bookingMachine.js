@@ -11,6 +11,7 @@ import aggregatePolicies from "./aggregatePolicies.js";
 import aggregateSlots from "./aggregateSlots.js";
 import completeSlots from "./completeSlots.js";
 import fetchMachine from "./fetchMachine.js";
+import noContentMachine from "./noContentMachine.js";
 import getGroupDetails from "./getGroupDetails.js";
 import getSlotAvailable from "./getSlotAvailable.js";
 import loginMachine from "./loginMachine.js";
@@ -182,7 +183,7 @@ const bookingMachine = createMachine({
     },
     booking: {
       on: {
-        BOOKINGREQUEST: {
+        REQUESTBOOKING: {
           target: "requestBooking",
           actions: assign({
             requestBooking: (context, event) => {
@@ -203,31 +204,46 @@ const bookingMachine = createMachine({
         },
       },
     },
-    requestBooking: {},
-    selected: {
+    selected: {},
+    requestBooking: {
       invoke: {
-        src: fetchMachine,
+        src: noContentMachine,
         data: {
           path: (context, event) =>
             import.meta.env.VITE_APP_BOOK_SERVER +
-            "/api/v1/groups/" +
-            context.group,
-          method: "GET",
+            "/api/v1/slots/" +
+            context.requestBooking.id +
+            "?" +
+            new URLSearchParams({
+              user_name: context.userName,
+              from: context.requestBooking.start,
+              to: context.requestBooking.end,
+            }),
+          method: "POST",
           token: (context, event) => context.token,
         },
         onDone: {
-          target: "displayGroup",
+          target: "bookingResponse", //nb this catches 404 so not booking success yet!
           actions: assign({
-            groupDetails: (context, event) => {
-              return event.data;
+            bookingResponse: (context, event) => {
+              return event;
             },
           }),
         },
         onError: {
-          target: "terminated",
+          target: "bookingError",
+          actions: assign({
+            bookingFailedReason: (context, event) => {
+              return event;
+            },
+          }),
         },
       },
     },
+    bookingError: {},
+    bookingResponse: {},
+    bookingSuccess: {},
+    bookingFailed: {},
     displayGroup: {},
 
     terminated: {

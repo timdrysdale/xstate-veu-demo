@@ -3,9 +3,10 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 export default {
-  props: ["description"],
+  props: ["booking"],
   components: {},
   computed: {
+    /*
     title: function () {
       return this.description.name;
     },
@@ -20,12 +21,11 @@ export default {
     },
     about: function () {
       return this.description.long;
-    },
+      },*/
   },
   methods: {
-    open() {
-      var path = "/activity/" + this.id;
-      this.$router.push({ path: path });
-    },
+    //TODO emit event here to get activity
   },
 };
+
+//TODO watch for activity coming into time ...
