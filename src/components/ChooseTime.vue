@@ -27,7 +27,9 @@
 </div>
 
 <div class="row">
-{{ slot.available }}
+  {{ slot.available }} <br/>
+  details: {{ slot.policyDetails }} <br/>
+  suggested: {{ suggested }} <br/>
   </div>
 
    
