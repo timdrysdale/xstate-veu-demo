@@ -32,15 +32,8 @@
 	<li v-for="policy in context.policies">
 	  {{ policy.description.name }} : {{ policy.description.short }}
 	</li>
-	<h4> Your slot cards </h4>
-
-	<booking-slot :description="context.slots" />
 	
-  <booking-slot
-	v-for="(slot,key) in context.slots"
-	:key="key"
-	:description="slot.description">
-   </booking-slot>
+	<booking-slots :slots="context.slots"> </booking-slots>
 
 	<h4> Your slots </h4>
 <li v-for="(slot,key) in context.slots" :key="key">

@@ -13,8 +13,7 @@ import getGroupDetails from "./getGroupDetails.js";
 import aggregatePolicies from "./aggregatePolicies.js";
 import aggregateSlots from "./aggregateSlots.js";
 import getSlotAvailable from "./getSlotAvailable.js";
-import Hello from "./Hello.vue";
-import BookingSlot from "./BookingSlot.vue";
+import BookingSlots from "./BookingSlots.vue";
 
 const bookingMachine = createMachine({
   id: "bookingMachine",
@@ -194,8 +193,24 @@ const bookingMachine = createMachine({
 export default {
   name: "Booking",
   components: {
-    Hello,
-    BookingSlot,
+    BookingSlots,
+  },
+  computed: {
+    filteredSlots() {
+      var filter = this.slotFilter.toLowerCase();
+      var items = context.slots;
+
+      items.sort((a, b) => (a.name > b.name ? 1 : -1));
+
+      if (filter == "") {
+        return items;
+      }
+      var results = items.filter((obj) => {
+        return obj.name.toLowerCase().includes(filter);
+      });
+
+      return results;
+    },
   },
   created() {
     // Start service on component creation
