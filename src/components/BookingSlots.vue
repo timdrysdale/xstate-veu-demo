@@ -11,7 +11,6 @@
 
 	</div>
   </div>
-  <div class="row"> {{ filteredSlots }}</div>
   <div class="row">
   	  <input v-model="filter" placeholder="filter...">
   </div>

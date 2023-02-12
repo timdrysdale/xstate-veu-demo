@@ -22,24 +22,8 @@
 
   <template v-if="current.value === 'idle'">
 	
-<h4> Your bookings:  </h4>
-	<div> Your bookings {{ context.bookings }}</div>
-    <h4> Your groups:  </h4>
-	<li v-for="group in context.groups">
-	  {{ group.description.name }} : {{ group.description.short }}
-	</li>
-	<h4> Your policies </h4>
-	<li v-for="policy in context.policies">
-	  {{ policy.description.name }} : {{ policy.description.short }}
-	</li>
-	
-	<booking-slots :slots="context.slots"> </booking-slots>
+  <booking-slots :slots="context.slots"> </booking-slots>
 
-	<h4> Your slots </h4>
-<li v-for="(slot,key) in context.slots" :key="key">
-	  {{ slot.description.name }} :: {{ slot.description.short }} <br />
-	  {{ context.available[key] }}
-</li>  
   </template> 
    
   <template v-if="current.value === 'displayGroup'">
