@@ -3,35 +3,38 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 export default {
-  props: ["description", "available", "id", "service"], //, "available", "status"],
+  props: ["service", "slot"], //, "available", "status"],
   computed: {
     title: function () {
-      return this.description.name;
+      return this.slot.description.name;
     },
     image: function () {
-      return this.description.image;
+      return this.slot.description.image;
     },
     what: function () {
-      return this.description.short;
+      return this.slot.description.short;
     },
     about: function () {
-      return this.description.long;
+      return this.slot.description.long;
     },
     link: function () {
-      return this.description.further;
+      return this.slot.description.further;
     },
     nextBookable: function () {
-      if (this.available.length < 0) {
+      if (this.slot.available.length < 0) {
         return "All available slots booked for just now, please check again later";
       }
-      let start = dayjs(this.available[0].start);
+      let start = dayjs(this.slot.available[0].start);
       return "Available " + start.fromNow();
     },
   },
   methods: {
+    goBack() {
+      this.service.send("BACK");
+      console.log("go back to catalogue");
+    },
     makeBooking() {
-      let id = this.id;
-      this.service.send({ type: "BOOKING", value: id });
+      this.service.send({ type: "REQUESTBOOKING", value: this.slot.id });
       console.log("go to booking for", this.id);
     },
   },

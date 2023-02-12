@@ -30,7 +30,12 @@
 				</div>
   </template> 
   <template v-if="current.value === 'booking'">
-Make a booking here for {{ context.slotSelected }}
+<!--	Make a booking here for {{ context.slotSelected }}
+	{{ context.completeSlots[context.slotSelected] }}-->
+	<choose-time
+	  :service="BookingService"
+	  :slot="context.completeSlots[context.slotSelected]">
+	  </choose-time>
 	</template>
 	
   <template v-if="current.value === 'displayGroup'">

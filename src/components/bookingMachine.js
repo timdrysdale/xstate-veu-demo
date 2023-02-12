@@ -17,6 +17,7 @@ import loginMachine from "./loginMachine.js";
 
 import BookingSlots from "./BookingSlots.vue";
 import YourBookings from "./YourBookings.vue";
+import ChooseTime from "./ChooseTime.vue";
 
 const bookingMachine = createMachine({
   id: "bookingMachine",
@@ -172,14 +173,37 @@ const bookingMachine = createMachine({
           target: "booking",
           actions: assign({
             slotSelected: (context, event) => {
-              return event.value; // note we are using send({type:"BOOKING",value:"someslot"})
+              let slot = event.value; //// note we are using send({type:"BOOKING",value:"someslot"})
+              return slot;
             },
           }),
         },
       },
     },
-    booking: {},
-
+    booking: {
+      on: {
+        BOOKINGREQUEST: {
+          target: "requestBooking",
+          actions: assign({
+            requestBooking: (context, event) => {
+              return event.value;
+            },
+          }),
+        },
+        BACK: {
+          target: "idle",
+          actions: assign({
+            slotSelected: (context, event) => {
+              return undefined;
+            },
+            requestBooking: (context, event) => {
+              return undefined;
+            },
+          }),
+        },
+      },
+    },
+    requestBooking: {},
     selected: {
       invoke: {
         src: fetchMachine,
@@ -233,6 +257,7 @@ export default {
   components: {
     BookingSlots,
     YourBookings,
+    ChooseTime,
   },
   computed: {
     filteredSlots() {
