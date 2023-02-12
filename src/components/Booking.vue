@@ -30,7 +30,7 @@
 				</div>
   </template> 
   <template v-if="current.value === 'booking'">
-YEEEEEEEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAA!!!
+Make a booking here for {{ context.slotSelected }}
 	</template>
 	
   <template v-if="current.value === 'displayGroup'">

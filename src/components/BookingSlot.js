@@ -30,8 +30,8 @@ export default {
   },
   methods: {
     makeBooking() {
-      this.service.send("BOOKING");
-      console.log("make booking", this.id);
+      this.service.send({ type: "BOOKING", value: this.id });
+      console.log("go to booking for", this.id);
     },
   },
 };

@@ -32,6 +32,7 @@ const bookingMachine = createMachine({
     slots: [],
     available: {},
     completeSlots: {},
+    slotSelected: "",
   },
   states: {
     login: {
@@ -170,9 +171,8 @@ const bookingMachine = createMachine({
         BOOKING: {
           target: "booking",
           actions: assign({
-            group: (context, event) => {
-              //put event name in the group field
-              return event.name;
+            slotSelected: (context, event) => {
+              return event.value; // note we are using send({type:"BOOKING",value:"someslot"})
             },
           }),
         },
