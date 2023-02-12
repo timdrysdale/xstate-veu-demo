@@ -10,9 +10,6 @@ export default {
       var filter = this.filter.toLowerCase();
       var items = Object.entries(this.slots);
 
-      //Object.fromEntries(Object.entries(obj).filter(([key]) => key.includes('Name')));
-      console.log(items);
-
       //each item is an array with two elements [0] key and [1] object
       items.sort((a, b) => (a[0] > b[0] ? 1 : -1));
 
