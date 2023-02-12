@@ -9,7 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@xstate/inspect": "^0.7.1",
     "@xstate/vue": "^2.0.0",
+    "bootstrap": "^5.2.3",
     "vue": "^3.2.45",
     "xstate": "^4.35.4"
   },

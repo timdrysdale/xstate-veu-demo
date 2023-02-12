@@ -13,6 +13,8 @@ import getGroupDetails from "./getGroupDetails.js";
 import aggregatePolicies from "./aggregatePolicies.js";
 import aggregateSlots from "./aggregateSlots.js";
 import getSlotAvailable from "./getSlotAvailable.js";
+import Hello from "./Hello.vue";
+import BookingSlot from "./BookingSlot.vue";
 
 const bookingMachine = createMachine({
   id: "bookingMachine",
@@ -191,6 +193,10 @@ const bookingMachine = createMachine({
 
 export default {
   name: "Booking",
+  components: {
+    Hello,
+    BookingSlot,
+  },
   created() {
     // Start service on component creation
     this.BookingService.onTransition((state) => {
