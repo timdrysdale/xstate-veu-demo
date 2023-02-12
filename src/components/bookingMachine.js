@@ -7,12 +7,14 @@ import {
   sendParent,
 } from "xstate";
 
-import fetchMachine from "./fetchMachine.js";
-import loginMachine from "./loginMachine.js";
-import getGroupDetails from "./getGroupDetails.js";
 import aggregatePolicies from "./aggregatePolicies.js";
 import aggregateSlots from "./aggregateSlots.js";
+import completeSlots from "./completeSlots.js";
+import fetchMachine from "./fetchMachine.js";
+import getGroupDetails from "./getGroupDetails.js";
 import getSlotAvailable from "./getSlotAvailable.js";
+import loginMachine from "./loginMachine.js";
+
 import BookingSlots from "./BookingSlots.vue";
 
 const bookingMachine = createMachine({
@@ -28,6 +30,7 @@ const bookingMachine = createMachine({
     policies: {},
     slots: [],
     available: {},
+    completeSlots: {},
   },
   states: {
     login: {
@@ -133,10 +136,26 @@ const bookingMachine = createMachine({
       invoke: {
         src: getSlotAvailable,
         onDone: {
-          target: "idle",
+          target: "completeSlots",
           actions: assign({
             available: (context, event) => {
               return event.data.available;
+            },
+          }),
+        },
+        onError: {
+          target: "idle", //TODO figure out what to do here if error
+        },
+      },
+    },
+    completeSlots: {
+      invoke: {
+        src: completeSlots,
+        onDone: {
+          target: "idle",
+          actions: assign({
+            completeSlots: (context, event) => {
+              return event.data.slots;
             },
           }),
         },
@@ -189,7 +208,23 @@ const bookingMachine = createMachine({
     },
   },
 });
+/*
+ slotsComplete() {
+      if (!context) {
+        return {};
+      }
+      let items = context.slots;
+      let results = {};
 
+      for (const name in items) {
+        results[name] = context.slots[name];
+        results[name].available = context.available[name];
+      }
+
+      return slotsComplete;
+    },
+
+*/
 export default {
   name: "Booking",
   components: {
@@ -210,6 +245,10 @@ export default {
       });
 
       return results;
+    },
+    slotsComplete() {
+      console.log(context);
+      return { not: "implemented" };
     },
   },
   created() {

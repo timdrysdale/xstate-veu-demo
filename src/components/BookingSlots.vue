@@ -18,7 +18,8 @@
   <booking-slot
 	v-for="(slot,key) in filteredSlots"
 	:key="key"
-	:description="slot.description">
+	:description="slot.description"
+	:available="slot.available">	
    </booking-slot>
   </div>
 </div>
