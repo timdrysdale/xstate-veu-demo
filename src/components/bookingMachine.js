@@ -16,6 +16,7 @@ import getSlotAvailable from "./getSlotAvailable.js";
 import loginMachine from "./loginMachine.js";
 
 import BookingSlots from "./BookingSlots.vue";
+import YourBookings from "./YourBookings.vue";
 
 const bookingMachine = createMachine({
   id: "bookingMachine",
@@ -75,7 +76,7 @@ const bookingMachine = createMachine({
           target: "groups",
           actions: assign({
             bookings: (context, event) => {
-              return event.data;
+              return event.data.results;
             },
           }),
         },
@@ -229,6 +230,7 @@ export default {
   name: "Booking",
   components: {
     BookingSlots,
+    YourBookings,
   },
   computed: {
     filteredSlots() {
