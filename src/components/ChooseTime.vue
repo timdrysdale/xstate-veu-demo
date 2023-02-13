@@ -30,8 +30,17 @@
   {{ slot.available }} <br/>
   details: {{ slot.policyDetails }} <br/>
   suggested: {{ suggested }} <br/>
-  </div>
-
+</div>
+<div>
+<display-times 
+  v-for="(times,key) in suggested"
+  :key="key"
+  :duration="key"
+  :times="times"
+  :slot="slot"
+  :service="service">
+</display-times>
+</div>
    
   <div class="row mb-2">
 	<div class="col-md-2">

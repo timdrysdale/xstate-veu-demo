@@ -1,3 +1,4 @@
+import DisplayTimes from "./DisplayTimes.vue";
 import dayjs from "dayjs/esm/index.js";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -8,7 +9,9 @@ dayjs.extend(duration);
 
 export default {
   props: ["service", "slot"], //, "available", "status"],
-
+  components: {
+    DisplayTimes,
+  },
   computed: {
     title: function () {
       return this.slot.description.name;
