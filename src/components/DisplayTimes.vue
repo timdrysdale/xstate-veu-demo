@@ -1,7 +1,8 @@
 <template>
   <div class="row">
-{{ duration }}
-	
+	<h4 >{{ duration }} </h4>
+	</div>
+	<div>
 <display-time 
   v-for="(time,key) in times"
   :key="key"

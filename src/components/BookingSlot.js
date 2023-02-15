@@ -21,8 +21,8 @@ export default {
       return this.description.further;
     },
     nextBookable: function () {
-      if (this.available.length < 0) {
-        return "All available slots booked for just now, please check again later";
+      if (this.available.length < 1) {
+        return "No free slots available to book.";
       }
       let start = dayjs(this.available[0].start);
       return "Available " + start.fromNow();

@@ -40,7 +40,7 @@ export default {
 
       for (const name in this.slot.policyDetails.display_guides) {
         // convert into ISO8601 format
-        console.log("suggested for display_guide", name);
+        console.log("suggested for display_guide", name, this.slot.available);
 
         const guide = this.slot.policyDetails.display_guides[name];
 
@@ -48,25 +48,43 @@ export default {
         const duration = dayjs.duration(ds);
         console.log(ds, duration);
         let list = [];
+        let firstSlot = true;
 
         if (this.slot.available.length > 0) {
           this.slot.available.forEach(function (window, index) {
+            //do a single slot of that duration starting now, if possible
             let windowStart = dayjs(window.start);
             let windowEnd = dayjs(window.end);
             let now = dayjs();
             let suggestedStart = windowStart;
-            if (windowStart.isSameOrBefore(now)) {
+            let suggestedEnd;
+            if (windowStart.isSameOrBefore(now) && firstSlot) {
               suggestedStart = now;
+              firstSlot = false; //only do one slot starting now, even if it can't be added to list
+              suggestedEnd = suggestedStart.set("second", 0).add(duration);
+              if (suggestedEnd.isSameOrBefore(windowEnd)) {
+                list.push({ start: suggestedStart, end: suggestedEnd });
+              }
             }
-            let suggestedEnd = windowStart.add(duration);
+            // now prepare slots that start on the hour, and every duration thereafer
+            // e.g. 0,15,30,45 min. If the current window is after the top of the hour,
+            // just make sure not to add a slot that starts before the window
+
+            suggestedStart = windowStart.set("minute", 0).set("second", 0);
+            suggestedEnd = suggestedStart.add(duration);
 
             while (
-              suggestedEnd.isSameOrBefore(windowEnd) &&
-              list.length < guide.max_slots
+              list.length < guide.max_slots &&
+              suggestedEnd.isSameOrBefore(windowEnd)
             ) {
-              list.push({ start: suggestedStart, end: suggestedEnd });
+              if (
+                windowStart.isSameOrBefore(suggestedStart) &&
+                suggestedEnd.isSameOrBefore(windowEnd)
+              ) {
+                list.push({ start: suggestedStart, end: suggestedEnd });
+              }
               suggestedStart = suggestedStart.add(duration);
-              suggestedEnd = suggestedEnd.add(duration);
+              suggestedEnd = suggestedStart.add(duration);
             }
           });
 

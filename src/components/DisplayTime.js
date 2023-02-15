@@ -23,11 +23,11 @@ export default {
     makeBooking() {
       let booking = {
         id: this.slot.id,
-        start: this.start.format("YYYY-MM-DDTHH:MM:ss.SSSZ"),
-        end: this.end.format("YYYY-MM-DDTHH:MM:ss.SSSZ"),
+        start: this.start.format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+        end: this.end.format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
       };
       this.service.send({ type: "REQUESTBOOKING", value: booking });
-      console.log("request booking for", booking);
+      console.log("request booking for", booking, this.start, this.end);
     },
   },
 };

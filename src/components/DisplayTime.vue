@@ -1,8 +1,8 @@
 <template>
   <div class="row">
-
+<div class="col" />
 	<div class="col">
-	  {{ start }} 
+	  {{ start.format("ddd D MMM HH:mm") }} -  {{ end.format("HH:mm") }} 	
 	</div>
 	<div class="col">
 		<div class="dropup"> 
@@ -10,8 +10,12 @@
 				  Book
 				</button>
 
-          </div>	  
-	  </div>
-</div>
+        </div>
+ 
+	</div>
+	<div class="col" />
+	 <hr />
+  </div>
+ 
 </template>
 <script src="./DisplayTime.js"></script>
