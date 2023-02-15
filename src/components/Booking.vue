@@ -21,13 +21,9 @@
   </template>
 
   <template v-if="current.value === 'idle'">
-  <your-bookings :bookings="context.bookings"> </your-bookings>
+  <your-bookings :context="context" :bookings="context.bookings"> </your-bookings>
   <booking-slots :slots="context.completeSlots" :service="BookingService"> </booking-slots>
-  		<div class="dropup"> 
-				<button type="button" @click='send("BOOKING")' class="btn btn-primary" id="book">
-				  Book <span class="caret"></span>
-				</button>
-				</div>
+  	
   </template> 
   <template v-if="current.value === 'booking'">
 <!--	Make a booking here for {{ context.slotSelected }}

@@ -23,11 +23,7 @@
 	:id="slot.id"
 	:service="service">
   </booking-slot>
-    		<div class="dropup"> 
-				<button type="button" @click='makeBooking()' class="btn btn-primary" id="book">
-				  Book <span class="caret"></span>
-				</button>
-				</div>
+ 
   </div>
 </div>
 </template>

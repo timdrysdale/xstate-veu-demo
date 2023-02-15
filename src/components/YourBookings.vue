@@ -15,11 +15,17 @@
   	  <input v-model="filter" placeholder="filter...">
   </div>
   <div class="row">
-  <your-booking
+  <!--your-booking
 	v-for="(booking,key) in filteredBookings"
 	:key="key"
 	:booking="booking">
-   </your-booking>
+	</your-booking-->
+<display-booking
+  v-for="(booking,key) in filteredBookings"
+  :key="key"
+  :context="context"
+  :booking="booking">
+  </display-booking>
   </div>
 </div>
 </template>
