@@ -19,3 +19,16 @@ The reddit example looks appropriate.
 
 where each subreddit is instead a policy.
 
+## Back button ....
+
+Can the xstate be tied to a top level component, so that its context is available to all components loaded with the router?
+
+At present it reloads every time we return to the Booking component.
+
+As an interim step, if not clear how to put xstate at top level, we could use pinia to store the state from booking, and rehydrate when going back to that page, rather than redoing all the network stuff.
+Except .... we can't then send events to the services. So we have to keep them running. Spawn? KeepAlive?
+
+[Provide iwth composition](https://markus.oberlehner.net/blog/context-and-provider-pattern-with-the-vue-3-composition-api/)
+[Provide and inject](https://alirezavalizade.medium.com/react-context-in-vue-d40ee145974d)
+
+[Example](https://codesandbox.io/s/7n4fc)
