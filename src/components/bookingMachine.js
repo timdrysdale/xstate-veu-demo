@@ -19,6 +19,7 @@ import loginMachine from "./loginMachine.js";
 import BookingSlots from "./BookingSlots.vue";
 import YourBookings from "./YourBookings.vue";
 import ChooseTime from "./ChooseTime.vue";
+import DisplayBookingResponse from "./DisplayBookingResponse.vue";
 
 const bookingMachine = createMachine({
   id: "bookingMachine",
@@ -207,7 +208,7 @@ const bookingMachine = createMachine({
     selected: {},
     requestBooking: {
       invoke: {
-        src: noContentMachine,
+        src: fetchMachine, //noContentMachine,
         data: {
           path: (context, event) =>
             import.meta.env.VITE_APP_BOOK_SERVER +
@@ -226,7 +227,8 @@ const bookingMachine = createMachine({
           target: "bookingResponse", //nb this catches 404 so not booking success yet!
           actions: assign({
             bookingResponse: (context, event) => {
-              return event;
+              console.log(event.data);
+              return event.data;
             },
           }),
         },
@@ -241,7 +243,13 @@ const bookingMachine = createMachine({
       },
     },
     bookingError: {},
-    bookingResponse: {},
+    bookingResponse: {
+      on: {
+        BACK: {
+          target: "bookings",
+        },
+      },
+    },
     bookingSuccess: {},
     bookingFailed: {},
     displayGroup: {},
@@ -274,6 +282,7 @@ export default {
     BookingSlots,
     YourBookings,
     ChooseTime,
+    DisplayBookingResponse,
   },
   computed: {
     filteredSlots() {

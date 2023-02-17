@@ -33,7 +33,7 @@ export default {
   methods: {
     getActivity() {
       let id = this.booking.name;
-      this.service.send({ type: "ACTIVITY", value: id });
+      this.service.send({ type: "GETACTIVITY", value: id });
       console.log("get activity for booking", id, this.booking.slot.id);
     },
     cancelBooking() {

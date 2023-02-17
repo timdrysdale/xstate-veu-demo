@@ -32,7 +32,16 @@
 	  :service="BookingService"
 	  :slot="context.completeSlots[context.slotSelected]">
 	  </choose-time>
-	</template>
+  </template>
+
+   <template v-if="current.value === 'bookingResponse'">
+<!--	Make a booking here for {{ context.slotSelected }}
+	{{ context.completeSlots[context.slotSelected] }}-->
+	<display-booking-response
+	  :service="BookingService"
+	  :response="context.bookingResponse">
+	  </display-booking-response>
+  </template> 
 	
   <template v-if="current.value === 'displayGroup'">
 	<div> user: {{ context.userName }} </div>

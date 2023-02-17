@@ -61,7 +61,16 @@ export default createMachine(
           headers: {
             Authorization: _context.token,
           },
-        }).then((res) => res.json()),
+        })
+          .then((res) => {
+            console.log(res.status);
+            if (res.status == 204) {
+              // avoid parsing empty body on OK NO CONTENT response
+              return;
+            }
+            return res.json();
+          })
+          .catch(console.error),
     },
     guards: {
       withinLimit: (context) => context.retryCount < 5,
