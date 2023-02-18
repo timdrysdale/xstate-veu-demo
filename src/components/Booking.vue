@@ -54,11 +54,15 @@
 
     <template v-if="current.value === 'activityResponse'">
 <!--	Make a booking here for {{ context.slotSelected }}
-	{{ context.completeSlots[context.slotSelected] }}-->
+	{{ context.completeSlots[context.slotSelected] }}
 	<display-booking-response
 	  :service="BookingService"
 	  :response="context.activityResponse">
-	  </display-booking-response>
+	</display-booking-response>-->
+
+	<launch-activity
+	  :activity="context.activityResponse.results">
+	  </launch-activity>
    </template>  
 	
   <template v-if="current.value === 'displayGroup'">

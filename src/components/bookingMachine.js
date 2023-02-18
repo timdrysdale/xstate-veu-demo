@@ -20,6 +20,7 @@ import BookingSlots from "./BookingSlots.vue";
 import YourBookings from "./YourBookings.vue";
 import ChooseTime from "./ChooseTime.vue";
 import DisplayBookingResponse from "./DisplayBookingResponse.vue";
+import LaunchActivity from "./LaunchActivity.vue";
 
 const bookingMachine = createMachine({
   id: "bookingMachine",
@@ -401,6 +402,7 @@ export default {
     YourBookings,
     ChooseTime,
     DisplayBookingResponse,
+    LaunchActivity,
   },
   computed: {
     filteredSlots() {
