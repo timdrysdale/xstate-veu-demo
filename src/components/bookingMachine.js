@@ -25,6 +25,8 @@ const bookingMachine = createMachine({
   id: "bookingMachine",
   initial: "login",
   context: {
+    activities: {},
+    activityResponse: {},
     bookings: "",
     userName: "",
     token: "",
@@ -62,6 +64,13 @@ const bookingMachine = createMachine({
         },
         onError: {
           target: "terminated",
+        },
+      },
+    },
+    activityResponse: {
+      on: {
+        BACK: {
+          target: "refreshBookings",
         },
       },
     },
@@ -215,6 +224,14 @@ const bookingMachine = createMachine({
             },
           }),
         },
+        GETACTIVITY: {
+          target: "getActivity",
+          actions: assign({
+            getActivity: (Context, event) => {
+              return event.value;
+            },
+          }),
+        },
       },
     },
     booking: {
@@ -273,7 +290,39 @@ const bookingMachine = createMachine({
         },
       },
     },
-
+    getActivity: {
+      invoke: {
+        src: fetchMachine, //TODO check map for entry first
+        data: {
+          path: (context, event) =>
+            import.meta.env.VITE_APP_BOOK_SERVER +
+            "/api/v1/users/" +
+            context.userName +
+            "/bookings/" +
+            context.getActivity.name,
+          method: "PUT",
+          token: (context, event) => context.token,
+        },
+        onDone: {
+          target: "activityResponse", //nb this catches 404 so not booking success yet! //TODO go to activityResponse
+          actions: assign({
+            activityResponse: (context, event) => {
+              context.activities[context.getActivity.name] = event.data; //TODO put map entry in own assign function?
+              console.log(event.data);
+              return event.data;
+            },
+          }),
+        },
+        onError: {
+          target: "bookingError", //TODO go to an activityError state?
+          actions: assign({
+            bookingFailedReason: (context, event) => {
+              return event;
+            },
+          }),
+        },
+      },
+    },
     requestBooking: {
       invoke: {
         src: fetchMachine, //noContentMachine,
