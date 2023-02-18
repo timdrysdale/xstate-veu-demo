@@ -15,6 +15,13 @@
 		<p class="card-text text-secondary">  {{ start.format("ddd D MMM HH:mm") }} -  {{ end.format("HH:mm") }} </p>
 		<!--p class="card-text text-secondary">  {{ start }} -  {{ end }} </p-->
 		<div class="row">
+		  		<div class="col">
+		<div class="dropup"> 
+				<button type="button" @click='cancelBooking()' class="btn btn-danger" id="book">
+				  Cancel <span class="caret"></span>
+				</button>
+		</div>
+		</div>
 		<div class="col">
 		  <div class="dropup"> 
 				<button type="button" @click='getActivity()' class="btn btn-success" id="book">
@@ -22,12 +29,7 @@
 				</button>
 		  </div>
 		  </div>
-		<div class="col">
-		<div class="dropup"> 
-				<button type="button" @click='cancelBooking()' class="btn btn-danger" id="book">
-				  Cancel <span class="caret"></span>
-				</button>
-		</div>
+
 		</div>
 		</div>
 		
@@ -35,7 +37,7 @@
   </div>	  
   </div>
 
-</div>
+
 </template>
 </template>
 <script src="./DisplayBooking.js"></script>

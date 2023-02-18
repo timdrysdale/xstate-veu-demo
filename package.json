@@ -9,16 +9,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.6",
     "@xstate/inspect": "^0.7.1",
     "@xstate/vue": "^2.0.0",
     "bootstrap": "^5.2.3",
     "dayjs": "^1.11.7",
-    "vue": "^3.2.45",
+    "vue": "^3.2.47",
     "vue-router": "^4.1.6",
     "xstate": "^4.35.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
+    "sass": "^1.58.3",
     "vite": "^4.1.1"
   }
 }

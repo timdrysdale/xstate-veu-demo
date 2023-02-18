@@ -1,7 +1,7 @@
 import YourBooking from "./YourBooking.vue";
 import DisplayBooking from "./DisplayBooking.vue";
 export default {
-  props: ["bookings", "context"],
+  props: ["bookings", "context", "service"],
   components: {
     YourBooking,
     DisplayBooking,

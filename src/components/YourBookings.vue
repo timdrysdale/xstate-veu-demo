@@ -24,7 +24,8 @@
   v-for="(booking,key) in filteredBookings"
   :key="key"
   :context="context"
-  :booking="booking">
+  :booking="booking"
+  :service="service">
   </display-booking>
   </div>
 </div>

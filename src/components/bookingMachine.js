@@ -89,6 +89,32 @@ const bookingMachine = createMachine({
         },
       },
     },
+    refreshBookings: {
+      invoke: {
+        src: fetchMachine,
+        data: {
+          path: (context, event) =>
+            import.meta.env.VITE_APP_BOOK_SERVER +
+            "/api/v1/users/" +
+            context.userName +
+            "/bookings",
+          method: "GET",
+          token: (context, event) => context.token,
+        },
+        onDone: {
+          target: "idle",
+          actions: assign({
+            bookings: (context, event) => {
+              return event.data.results;
+            },
+          }),
+        },
+        onError: {
+          target: "terminated",
+        },
+      },
+    },
+
     groups: {
       invoke: {
         src: getGroupDetails,
@@ -242,11 +268,11 @@ const bookingMachine = createMachine({
         },
       },
     },
-    bookingError: {},
+    bookingError: {}, //consider going straight on to refreshBookings if successful
     bookingResponse: {
       on: {
         BACK: {
-          target: "bookings",
+          target: "refreshBookings",
         },
       },
     },

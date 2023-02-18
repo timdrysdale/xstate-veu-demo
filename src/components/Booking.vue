@@ -21,8 +21,17 @@
   </template>
 
   <template v-if="current.value === 'idle'">
-  <your-bookings :context="context" :bookings="context.bookings"> </your-bookings>
-  <booking-slots :slots="context.completeSlots" :service="BookingService"> </booking-slots>
+	
+	<your-bookings
+	  :context="context"
+	  :bookings="context.bookings"
+	  :service="BookingService">
+	</your-bookings>
+	
+	<booking-slots
+	  :slots="context.completeSlots"
+	  :service="BookingService">
+	</booking-slots>
   	
   </template> 
   <template v-if="current.value === 'booking'">

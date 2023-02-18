@@ -32,3 +32,11 @@ Except .... we can't then send events to the services. So we have to keep them r
 [Provide and inject](https://alirezavalizade.medium.com/react-context-in-vue-d40ee145974d)
 
 [Example](https://codesandbox.io/s/7n4fc)
+
+
+## Bootstrap
+
+
+https://getbootstrap.com/docs/5.2/getting-started/vite/
+npm i --save-dev sass
+npm i --save bootstrap @popperjs/core

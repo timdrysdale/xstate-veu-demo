@@ -1,9 +1,10 @@
 import dayjs from "dayjs/esm/index.js";
+import { ref } from "vue";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 export default {
-  props: ["booking", "context"],
+  props: ["booking", "context", "service"],
   computed: {
     description: function () {
       return this.context.slots[this.booking.slot].description;
@@ -32,13 +33,16 @@ export default {
   },
   methods: {
     getActivity() {
-      let id = this.booking.name;
-      this.service.send({ type: "GETACTIVITY", value: id });
-      console.log("get activity for booking", id, this.booking.slot.id);
+      this.service.send({ type: "GETACTIVITY", value: this.booking });
+      console.log(
+        "get activity for booking",
+        this.booking.name,
+        this.booking.slot
+      );
     },
     cancelBooking() {
-      let id = this.booking.name;
-      this.service.send({ type: "CANCELBOOKING", value: id });
+      this.service.send({ type: "CANCELBOOKING", value: this.booking });
+      console.log("cancel booking", this.booking.name, this.booking.slot);
     },
   },
 };
