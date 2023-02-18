@@ -36,6 +36,7 @@ const bookingMachine = createMachine({
     available: {},
     completeSlots: {},
     slotSelected: "",
+    cancelBooking: {},
   },
   states: {
     login: {
@@ -206,6 +207,14 @@ const bookingMachine = createMachine({
             },
           }),
         },
+        CANCELBOOKING: {
+          target: "cancelBooking",
+          actions: assign({
+            cancelBooking: (Context, event) => {
+              return event.value;
+            },
+          }),
+        },
       },
     },
     booking: {
@@ -232,6 +241,39 @@ const bookingMachine = createMachine({
       },
     },
     selected: {},
+    cancelBooking: {
+      invoke: {
+        src: fetchMachine,
+        data: {
+          path: (context, event) =>
+            import.meta.env.VITE_APP_BOOK_SERVER +
+            "/api/v1/users/" +
+            context.userName +
+            "/bookings/" +
+            context.cancelBooking.name,
+          method: "DELETE",
+          token: (context, event) => context.token,
+        },
+        onDone: {
+          target: "bookingResponse", //nb this catches 404 so not booking success yet!
+          actions: assign({
+            bookingResponse: (context, event) => {
+              console.log(event.data);
+              return event.data;
+            },
+          }),
+        },
+        onError: {
+          target: "bookingError",
+          actions: assign({
+            bookingFailedReason: (context, event) => {
+              return event;
+            },
+          }),
+        },
+      },
+    },
+
     requestBooking: {
       invoke: {
         src: fetchMachine, //noContentMachine,
@@ -268,6 +310,7 @@ const bookingMachine = createMachine({
         },
       },
     },
+
     bookingError: {}, //consider going straight on to refreshBookings if successful
     bookingResponse: {
       on: {
