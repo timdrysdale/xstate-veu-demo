@@ -8,7 +8,7 @@ dayjs.extend(relativeTime);
 dayjs.extend(duration);
 
 export default {
-  props: ["duration", "service", "slot", "times"],
+  props: ["duration", "slot", "times"],
   components: {
     DisplayTime,
   },

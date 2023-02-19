@@ -1,12 +1,17 @@
 import YourBooking from "./YourBooking.vue";
 import DisplayBooking from "./DisplayBooking.vue";
+import { useBookingService } from "./bookingMachine.js";
+
 export default {
-  props: ["bookings", "context", "service"],
+  props: [],
   components: {
     YourBooking,
     DisplayBooking,
   },
   computed: {
+    bookings() {
+      return this.state.context.bookings;
+    },
     filteredBookings() {
       var filter = this.filter.toLowerCase();
       var items = Object.entries(this.bookings);
@@ -28,6 +33,13 @@ export default {
     return {
       filter: "",
       disableRefresh: true,
+    };
+  },
+  setup() {
+    const { state, send } = useBookingService();
+    return {
+      state,
+      send,
     };
   },
 };

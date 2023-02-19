@@ -1,5 +1,7 @@
+import { useBookingService } from "./bookingMachine.js";
+
 export default {
-  props: ["service", "response"],
+  props: ["response"],
   computed: {
     reason: function () {
       return this.response;
@@ -13,8 +15,15 @@ export default {
   },
   methods: {
     back() {
-      this.service.send("BACK");
+      this.send("BACK");
       console.log("go back!");
     },
+  },
+  setup() {
+    const { state, send } = useBookingService();
+    return {
+      state,
+      send,
+    };
   },
 };

@@ -20,8 +20,7 @@
 	:key="key"
 	:description="slot.description"
 	:available="slot.available"
-	:id="slot.id"
-	:service="service">
+	:id="slot.id">
   </booking-slot>
  
   </div>

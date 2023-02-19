@@ -6,7 +6,6 @@
 <display-time 
   v-for="(time,key) in times"
   :key="key"
-  :service="service"
   :slot="slot"
   :time="time">
 </display-time>

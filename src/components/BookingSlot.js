@@ -1,9 +1,10 @@
 import dayjs from "dayjs/esm/index.js";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useBookingService } from "./bookingMachine.js";
 dayjs.extend(relativeTime);
 
 export default {
-  props: ["description", "available", "id", "service"], //, "available", "status"],
+  props: ["description", "available", "id"],
   computed: {
     title: function () {
       return this.description.name;
@@ -31,8 +32,15 @@ export default {
   methods: {
     makeBooking() {
       let id = this.id;
-      this.service.send({ type: "BOOKING", value: id });
+      this.send({ type: "BOOKING", value: id });
       console.log("go to booking for", this.id);
     },
+  },
+  setup() {
+    const { state, send } = useBookingService();
+    return {
+      state,
+      send,
+    };
   },
 };

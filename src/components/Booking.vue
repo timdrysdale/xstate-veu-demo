@@ -20,7 +20,7 @@ components: {
 computed: {
     filteredSlots() {
       var filter = this.slotFilter.toLowerCase();
-      var items = context.slots;
+      var items = state.context.slots;
 
       items.sort((a, b) => (a.name > b.name ? 1 : -1));
 
@@ -34,14 +34,14 @@ computed: {
       return results;
     },
     slotsComplete() {
-      console.log(context);
+      console.log(state.context);
       return { not: "implemented" };
     },
   },
   setup() {
-    const { context, send } = useBookingService();
+    const { state, send } = useBookingService();
     return {
-      context,
+      state,
       send,
     };
   },
@@ -49,82 +49,71 @@ computed: {
 </script>
 
 <template>
-<template v-if="true">
-{{ context }}
+<template v-if="false">
+{{ state }}
 </template>
 <template v-else>
-  <template v-if="current.value === 'login'">
+  <template v-if="state.value === 'login'">
     <div>Logging in ...</div>
   </template> 
-  <template v-if="current.value === 'bookings'">
+  <template v-if="state.value === 'bookings'">
     <div>Getting bookings ...</div>
   </template>
-  <template v-if="current.value === 'notused'">  
-    <div> Your groups {{ context.groups }}.</div>
-	<div> Your bookings {{ context.bookings }}.</div>
+  <template v-if="state.value === 'notused'">  
+    <div> Your groups {{ state.context.groups }}.</div>
+	<div> Your bookings {{ state.context.bookings }}.</div>
 	<button @click="send({type:'SELECT',name:'g-everyone'})">Get g-everyone details</button>
   </template>
 
-  <template v-if="current.value === 'groups'">
+  <template v-if="state.value === 'groups'">
 <h4> Your bookings:  </h4>
-	<div> Your bookings {{ context.bookings }}</div>
+	<div> Your bookings {{ state.context.bookings }}</div>
     <h4> Your groups:  </h4>
-	<li v-for="group in context.groups">
+	<li v-for="group in state.context.groups">
 	  {{ group.description.name }} : {{ group.description.short }}
 	</li>
   </template>
 
-  <template v-if="current.value === 'idle'">
+  <template v-if="state.value === 'idle'">
 	
-	<your-bookings
-	  :context="context"
-	  :bookings="context.bookings"
-	  :service="BookingService">
-	</your-bookings>
-	
-	<booking-slots
-	  :slots="context.completeSlots"
-	  :service="BookingService">
-	</booking-slots>
+	<your-bookings></your-bookings>
+	<booking-slots></booking-slots>
   	
   </template> 
-  <template v-if="current.value === 'booking'">
-<!--	Make a booking here for {{ context.slotSelected }}
-	{{ context.completeSlots[context.slotSelected] }}-->
+  <template v-if="state.value === 'booking'">
+<!--	Make a booking here for {{ state.context.slotSelected }}
+	{{ state.context.completeSlots[state.context.slotSelected] }}-->
 	<choose-time
-	  :service="BookingService"
-	  :slot="context.completeSlots[context.slotSelected]">
+	  :slot="state.context.completeSlots[state.context.slotSelected]">
 	  </choose-time>
   </template>
 
-   <template v-if="current.value === 'bookingResponse'">
-<!--	Make a booking here for {{ context.slotSelected }}
-	{{ context.completeSlots[context.slotSelected] }}-->
+   <template v-if="state.value === 'bookingResponse'">
+<!--	Make a booking here for {{ state.context.slotSelected }}
+	{{ state.context.completeSlots[state.context.slotSelected] }}-->
 	<display-booking-response
-	  :service="BookingService"
-	  :response="context.bookingResponse">
+	  :response="state.context.bookingResponse">
 	  </display-booking-response>
    </template>
 
-    <template v-if="current.value === 'activityResponse'">
-<!--	Make a booking here for {{ context.slotSelected }}
-	{{ context.completeSlots[context.slotSelected] }}
+    <template v-if="state.value === 'activityResponse'">
+<!--	Make a booking here for {{ state.context.slotSelected }}
+	{{ state.context.completeSlots[state.context.slotSelected] }}
 	<display-booking-response
-	  :service="BookingService"
-	  :response="context.activityResponse">
+	  :response="state.context.activityResponse">
 	</display-booking-response>-->
 
 	<launch-activity
-	  :activity="context.activityResponse.results">
+	  :activity="state.context.activityResponse.results">
 	  </launch-activity>
    </template>  
 	
-  <template v-if="current.value === 'displayGroup'">
-	<div> user: {{ context.userName }} </div>
-	<div> token: {{ context.token }} </div>
-    <div> Your groups {{ context.groups }}.</div>
-	<div> Your bookings {{ context.bookings }}.</div>
-	<div> g-everyone selected: {{ context.groupDetails}} </div>
+  <template v-if="state.value === 'displayGroup'">
+	<div> user: {{ state.context.userName }} </div>
+	<div> token: {{ state.context.token }} </div>
+    <div> Your groups {{ state.context.groups }}.</div>
+	<div> Your bookings {{ state.context.bookings }}.</div>
+	<div> g-everyone selected: {{ state.context.groupDetails}} </div>
 
   </template>
   

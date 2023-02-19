@@ -1,5 +1,4 @@
 import { assign, createMachine } from "xstate";
-import noContentMachine from "./noContentMachine.js";
 import fetchMachine from "./fetchMachine.js";
 
 const getUserLocally = (context, event) =>
@@ -38,6 +37,7 @@ export default createMachine({
     defaultGroup: "",
     defaultGroupAddedStatus: undefined,
   },
+  predictableActionArguments: true,
   states: {
     userLocal: {
       invoke: {
@@ -149,7 +149,7 @@ export default createMachine({
     },
     addDefaultGroup: {
       invoke: {
-        src: noContentMachine,
+        src: fetchMachine,
         data: {
           id: "addDefaultGroup",
           path: (context, event) =>
@@ -182,7 +182,7 @@ export default createMachine({
     },
     addSecondGroup: {
       invoke: {
-        src: noContentMachine,
+        src: fetchMachine,
         data: {
           id: "addSecondGroup",
           path: (context, event) =>

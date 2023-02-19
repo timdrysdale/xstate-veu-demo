@@ -29,8 +29,7 @@
   :key="key"
   :duration="key"
   :times="times"
-  :slot="slot"
-  :service="service">
+  :slot="slot">
 </display-times>
 </div>
 		</div>

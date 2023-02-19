@@ -1,11 +1,15 @@
 import BookingSlot from "./BookingSlot.vue";
+import { useBookingService } from "./bookingMachine.js";
 
 export default {
-  props: ["slots", "service"],
+  props: [],
   components: {
     BookingSlot,
   },
   computed: {
+    slots() {
+      return this.state.context.completeSlots;
+    },
     filteredSlots() {
       var filter = this.filter.toLowerCase();
       var items = Object.entries(this.slots);
@@ -29,9 +33,11 @@ export default {
       disableRefresh: true,
     };
   },
-  methods: {
-    makeBooking() {
-      this.service.send("BOOKING");
-    },
+  setup() {
+    const { state, send } = useBookingService();
+    return {
+      state,
+      send,
+    };
   },
 };

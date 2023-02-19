@@ -3,6 +3,7 @@ import dayjs from "dayjs/esm/index.js";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { useBookingService } from "./bookingMachine.js";
 dayjs.extend(isSameOrBefore);
 dayjs.extend(relativeTime);
 dayjs.extend(duration);
@@ -102,7 +103,7 @@ export default {
   },
   methods: {
     goBack() {
-      this.service.send("BACK");
+      this.send("BACK");
       console.log("go back to catalogue");
     },
     makeBooking() {
@@ -111,8 +112,15 @@ export default {
         start: this.start,
         end: this.end,
       };
-      this.service.send({ type: "REQUESTBOOKING", value: booking });
+      this.send({ type: "REQUESTBOOKING", value: booking });
       console.log("request booking for", booking);
     },
+  },
+  setup() {
+    const { state, send } = useBookingService();
+    return {
+      state,
+      send,
+    };
   },
 };

@@ -15,7 +15,6 @@ import aggregatePolicies from "./aggregatePolicies.js";
 import aggregateSlots from "./aggregateSlots.js";
 import completeSlots from "./completeSlots.js";
 import fetchMachine from "./fetchMachine.js";
-import noContentMachine from "./noContentMachine.js";
 import getGroupDetails from "./getGroupDetails.js";
 import getSlotAvailable from "./getSlotAvailable.js";
 import loginMachine from "./loginMachine.js";
@@ -47,6 +46,7 @@ const bookingMachine = createMachine({
     slotSelected: "",
     cancelBooking: {},
   },
+  predictableActionArguments: true,
   states: {
     login: {
       invoke: {
@@ -332,7 +332,7 @@ const bookingMachine = createMachine({
     },
     requestBooking: {
       invoke: {
-        src: fetchMachine, //noContentMachine,
+        src: fetchMachine,
         data: {
           path: (context, event) =>
             import.meta.env.VITE_APP_BOOK_SERVER +
