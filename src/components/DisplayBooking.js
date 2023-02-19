@@ -18,7 +18,7 @@ export default {
     },
     bookingNotStarted: function () {
       if (this.booking) {
-        return dayjs().isBefore(this.start);
+        return this.now.isBefore(this.start);
       }
     },
     title: function () {
@@ -57,6 +57,11 @@ export default {
       }
     },
   },
+  data() {
+    return {
+      now: dayjs(),
+    };
+  },
   methods: {
     getActivity() {
       this.send({ type: "GETACTIVITY", value: this.booking });
@@ -76,6 +81,18 @@ export default {
       this.send({ type: "CANCELBOOKING", value: this.booking });
       console.log("cancel booking", this.booking.name, this.booking.slot);
     },
+  },
+  mounted() {
+    // set a timer to update this.now 1 second after the booking has started...
+    // this should enable the open button on demand
+    this.now = dayjs();
+    let later = dayjs(this.booking.when.start);
+    let wait = dayjs.duration(later.diff(this.now)).add(1, "second");
+    setTimeout(() => {
+      this.now = dayjs();
+      console.log("updated now for booking");
+    }, wait.asMilliseconds());
+    console.log(wait);
   },
   setup() {
     const { state, send } = useBookingService();
