@@ -15,21 +15,47 @@ export default {
   },
   computed: {
     title: function () {
-      return this.slot.description.name;
+      if (this.slot && this.slot.hasOwnProperty("description")) {
+        return this.slot.description.name;
+      } else {
+        return "";
+      }
     },
     image: function () {
-      return this.slot.description.image;
+      if (this.slot && this.slot.hasOwnProperty("description")) {
+        return this.slot.description.image;
+      } else {
+        return "";
+      }
     },
     what: function () {
-      return this.slot.description.short;
+      if (this.slot && this.slot.hasOwnProperty("description")) {
+        return this.slot.description.short;
+      } else {
+        return "";
+      }
     },
     about: function () {
-      return this.slot.description.long;
+      if (this.slot && this.slot.hasOwnProperty("description")) {
+        return this.slot.description.long;
+      } else {
+        return "";
+      }
     },
     link: function () {
-      return this.slot.description.further;
+      if (this.slot && this.slot.hasOwnProperty("description")) {
+        return this.slot.description.further;
+      } else {
+        return "";
+      }
     },
     nextBookable: function () {
+      if (!this.slot) {
+        return "loading";
+      }
+      if (!Array.isArray(this.slot.available)) {
+        return "No free slots available to book";
+      }
       if (!this.slot.available) {
         return "No free slots available to book.";
       }
@@ -43,6 +69,10 @@ export default {
       return "No free slots available to book";
     },
     suggested: function () {
+      if (!this.slot) {
+        return;
+      }
+
       let all = {};
 
       for (const name in this.slot.policyDetails.display_guides) {
@@ -121,6 +151,13 @@ export default {
       this.send({ type: "REQUESTBOOKING", value: booking });
       console.log("request booking for", booking);
     },
+  },
+  mounted() {
+    if (!this.slot) {
+      //if page refreshes at this routing, go back to home to avoid empty page
+      var path = "/";
+      this.$router.push({ path: path });
+    }
   },
   setup() {
     const { state, send } = useBookingService();

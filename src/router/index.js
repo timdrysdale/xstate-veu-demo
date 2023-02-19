@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from "vue-router";
 
 import About from "../views/About.vue";
 import Activity from "../views/Activity.vue";
+import BookingResponse from "../views/BookingResponse.vue";
 import Home from "../views/Home.vue";
 import NotFound from "../views/NotFound.vue";
 import Slot from "../views/Slot.vue";
@@ -21,6 +22,11 @@ const routes = [
     path: "/activity/:id",
     name: "Activity",
     component: Activity,
+  },
+  {
+    path: "/bookingResponse",
+    name: "BookingResponse",
+    component: BookingResponse,
   },
   {
     path: "/slot/:id",
