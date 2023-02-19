@@ -1,11 +1,12 @@
-import dayjs from "dayjs/esm/index.js";
-import { ref } from "vue";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { useBookingService } from "./bookingMachine.js";
-dayjs.extend(relativeTime);
-
+import DisplayBooking from "./DisplayBooking.js";
+import dayjs from "dayjs/esm/index.js";
 export default {
+  name: "CancelConfirm",
   props: ["booking"],
+  components: {
+    DisplayBooking,
+  },
   computed: {
     description: function () {
       if (this.booking) {
@@ -18,7 +19,9 @@ export default {
     },
     bookingNotStarted: function () {
       if (this.booking) {
-        return this.now.isBefore(this.start);
+        if (this.booking.hasOwnProperty("start")) {
+          return this.now.isBefore(this.start);
+        }
       }
     },
     title: function () {
@@ -48,13 +51,19 @@ export default {
     },
     start: function () {
       if (this.booking) {
-        return dayjs(this.booking.when.start);
+        if (this.booking.hasOwnProperty("when")) {
+          return dayjs(this.booking.when.start);
+        }
       }
+      return dayjs();
     },
     end: function () {
       if (this.booking) {
-        return dayjs(this.booking.when.end);
+        if (this.booking.hasOwnProperty("when")) {
+          return dayjs(this.booking.when.end);
+        }
       }
+      return dayjs();
     },
   },
   data() {
@@ -63,36 +72,22 @@ export default {
     };
   },
   methods: {
-    getActivity() {
-      this.send({ type: "GETACTIVITY", value: this.booking });
-
-      console.log(
-        "get activity for booking",
-        this.booking.name,
-        this.booking.slot
-      );
-
-      var path = "/activity/" + this.booking.name;
+    keep() {
+      var path = "/";
       this.$router.push({ path: path });
     },
-
-    cancelBooking() {
-      this.state.context.bookingToCancel = this.booking;
-      var path = "/cancelConfirm/" + this.booking.name;
+    cancel() {
+      this.send({ type: "CANCELBOOKING", value: this.booking });
+      console.log("cancel booking", this.booking.name, this.booking.slot);
+      var path = "/";
       this.$router.push({ path: path });
     },
   },
   mounted() {
-    // set a timer to update this.now 1 second after the booking has started...
-    // this should enable the open button on demand
-    this.now = dayjs();
-    let later = dayjs(this.booking.when.start);
-    let wait = dayjs.duration(later.diff(this.now)).add(1, "second");
-    setTimeout(() => {
-      this.now = dayjs();
-      console.log("updated now for booking");
-    }, wait.asMilliseconds());
-    console.log(wait);
+    var path = "/";
+    if (Object.keys(this.booking).length === 0) {
+      this.$router.push({ path: path });
+    }
   },
   setup() {
     const { state, send } = useBookingService();

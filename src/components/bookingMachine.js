@@ -34,6 +34,7 @@ const bookingMachine = createMachine({
     activities: {},
     activityResponse: {},
     bookingResponse: {},
+    bookingToCancel: {},
     cancelResponse: {},
     bookings: "",
     userName: "",
