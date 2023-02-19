@@ -21,6 +21,12 @@ export default {
     link: function () {
       return this.description.further;
     },
+    notAvailable: function () {
+      if (this.available) {
+        return this.available.length < 1;
+      }
+      return true;
+    },
     nextBookable: function () {
       if (!this.available) {
         return "No free slots available to book.";

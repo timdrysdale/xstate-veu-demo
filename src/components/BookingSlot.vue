@@ -14,7 +14,7 @@
         <p class="card-text text-secondary"> {{ what }}</p>
 		<p class="card-text text-secondary"> {{ nextBookable }} </p>
 		<div class="dropup"> 
-				<button type="button" @click='makeBooking()' class="btn btn-primary" id="book">
+				<button type="button" @click='makeBooking()' class="btn btn-primary" id="book" :disabled="notAvailable">
 				  Book <span class="caret"></span>
 				</button>
 				</div>
