@@ -1,5 +1,7 @@
-<template>
-   <div class="container-fluid">
+<template> 
+<div class="container-fluid">
+
+  
 	 <div class="row">
 	   <div class="col"></div>
         <div class="card mb-3" style="max-width: 540px;">
@@ -12,19 +14,24 @@
                 <h5 class="card-title"> {{ title }}</h5>
                 <p class="card-text text-secondary"> {{ what }}</p>
         		<p class="card-text text-secondary"> {{ nextBookable }} </p>
-          		<div class="dropup"> 
-        					<button type="button" @click='goBack()' class="btn btn-warning" id="cancel">
-        				  Go back to catalogue
-        				</button>
-        		</div>
-            </div>	  
+               </div>	  
           </div>
         </div>
 		</div>
-		 <div class="col"></div>
-		<div class="row">
-		  <div class="col"></div><div class="col">
+		<div class="col"></div>
 
+		  <div class="bg-secondary row mb-2">
+	<div class="col">
+      <h3 class="text-white text-left">Choose time</h3>
+      <!--h6 class="text-white text-left"><button v-if="!disableRefresh" class="btn btn-light" @click="getStatus()" :disabled="disableRefresh">refresh</button> {{ status }}</h6--> 
+    </div>
+
+  </div>
+
+	
+
+		  <div class="row ">
+			
 <display-times 
   v-for="(times,key) in suggested"
   :key="key"
@@ -32,38 +39,37 @@
   :times="times"
   :slot="slot">
 </display-times>
-</div> <div class="col"></div>
-		</div>
-		
-		<div class="row ">
-		  <div class="col"></div>
-	<div class="col">
-       Start:  <input v-model="start" placeholder="YYYY-MM-DDTHH:MM:SSZ">
-    </div>
-    <div class="col">
-      End:  <input v-model="end" placeholder="YYYY-MM-DDTHH:MM:SSZ">
-     </div>
-     <div class="col">
+
+		  </div>
+
  
- 		<div class="dropup"> 
+  <div class="row mb-2">
+	<div class="col">
+      <h4 class="bg-light" > Custom </h4>
+	     </div>
+	</div>	
+
+
+		  
+		
+  <div class="row ">
+
+	<div class="col"></div>
+ 	<div class="col">
+       Start:  <input v-model="start" placeholder="YYYY-MM-DDTHH:MM:SSZ">
+ 
+      End:  <input v-model="end" placeholder="YYYY-MM-DDTHH:MM:SSZ">
+
+  		<div class="dropup"> 
 				<button type="button" @click='makeBooking()' class="btn btn-primary" id="book">
 				  Book
 				</button>
 	    </div>
-     </div>
-  </div>
-	 <div class="col"></div>
-  <div class="row">
- 
- 		<div class="dropup"> 
-				<button type="button" @click='goBack()' class="btn btn-warning" id="cancel">
-				  Go back to catalogue
-				</button>
-		</div>
-		
-     </div>
-
+	</div>
 	
+	<div class="col"></div>	
+     	</div> 
+ 	
 	 </div>
 	 </div>
 		
