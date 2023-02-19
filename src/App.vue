@@ -14,7 +14,7 @@
 </script>
 
 <template>
-<template v-if="false">
+<template v-if="true">
   <img width="300" src="https://dev.practable.io/static/images/common/practable-logo-3-1980x660.png">
 
   <div id="nav">
