@@ -1,31 +1,19 @@
 import { createWebHistory, createRouter } from "vue-router";
 
 import About from "../views/About.vue";
-import Catalogue from "../views/Catalogue.vue";
-import Cookies from "../views/Cookies.vue";
-import MakeBooking from "../views/MakeBooking.vue";
+import Home from "../views/Home.vue";
 import NotFound from "../views/NotFound.vue";
 
 const routes = [
   {
     path: "/",
-    name: "Catalogue",
-    component: Catalogue,
+    name: "Home",
+    component: Home,
   },
   {
     path: "/about",
     name: "About",
     component: About,
-  },
-  {
-    path: "/cookies",
-    name: "Cookies",
-    component: Cookies,
-  },
-  {
-    path: "/makebooking/:slot",
-    name: "MakeBooking",
-    component: MakeBooking,
   },
   {
     path: "/:catchAll(.*)",
