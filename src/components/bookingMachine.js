@@ -44,6 +44,7 @@ const bookingMachine = createMachine({
     groupDetails: {}, //subMachines see https://xstate.js.org/docs/tutorials/reddit.html#spawning-subreddit-actors
     policies: {},
     slots: [],
+    status: {},
     available: {},
     completeSlots: {},
     slotSelected: "",
@@ -59,7 +60,7 @@ const bookingMachine = createMachine({
           secondGroup: "g-engdes1-lab", //TODO get from query rather than hardcoding
         },
         onDone: {
-          target: "bookings",
+          target: "status",
           actions: assign({
             groups: (context, event) => {
               return event.data.groups;
@@ -173,6 +174,28 @@ const bookingMachine = createMachine({
         },
         onError: {
           target: "idle", //TODO figure out what to do here if error
+        },
+      },
+    },
+    status: {
+      invoke: {
+        src: fetchMachine,
+        data: {
+          path: (context, event) =>
+            import.meta.env.VITE_APP_BOOK_SERVER + "/api/v1/users/status",
+          method: "GET",
+          token: (context, event) => context.token,
+        },
+        onDone: {
+          target: "bookings",
+          actions: assign({
+            status: (context, event) => {
+              return event.data.results;
+            },
+          }),
+        },
+        onError: {
+          target: "terminated",
         },
       },
     },
