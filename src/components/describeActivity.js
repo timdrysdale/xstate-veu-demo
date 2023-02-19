@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 export default {
-  props: ["activity", "id"],
+  props: ["activity"],
   computed: {
     title: function () {
       if (this.activity.hasOwnProperty("description")) {
@@ -32,7 +32,11 @@ export default {
       }
     },
     status: function () {
-      return "Now until " + dayjs.unix(this.activity.exp).format("h:mm A");
+      return (
+        dayjs.unix(this.activity.nbf).format("ddd D MMM HH:mm") +
+        " - " +
+        dayjs.unix(this.activity.exp).format("HH:mm")
+      );
     },
     dataloaded: function () {
       return this.activity != {};

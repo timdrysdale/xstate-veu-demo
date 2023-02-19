@@ -8,34 +8,52 @@ export default {
   props: ["booking"],
   computed: {
     description: function () {
-      return this.state.context.slots[this.booking.slot].description;
+      if (this.booking) {
+        if (this.booking.slot) {
+          if (this.state.context.slots[this.booking.slot]) {
+            return this.state.context.slots[this.booking.slot].description;
+          }
+        }
+      }
     },
     title: function () {
-      return this.description.name;
+      if (this.description) {
+        return this.description.name;
+      }
     },
     image: function () {
-      return this.description.image;
+      if (this.description) {
+        return this.description.image;
+      }
     },
     what: function () {
-      return this.description.short;
+      if (this.description) {
+        return this.description.short;
+      }
     },
     about: function () {
-      return this.description.long;
+      if (this.description) {
+        return this.description.long;
+      }
     },
     link: function () {
-      return this.description.further;
+      if (this.description) {
+        return this.description.further;
+      }
     },
     start: function () {
-      return dayjs(this.booking.when.start);
+      if (this.booking) {
+        return dayjs(this.booking.when.start);
+      }
     },
     end: function () {
-      return dayjs(this.booking.when.end);
+      if (this.booking) {
+        return dayjs(this.booking.when.end);
+      }
     },
   },
   methods: {
     getActivity() {
-      var path = "/activity/" + this.booking.name;
-
       this.send({ type: "GETACTIVITY", value: this.booking });
 
       console.log(
@@ -44,6 +62,7 @@ export default {
         this.booking.slot
       );
 
+      var path = "/activity/" + this.booking.name;
       this.$router.push({ path: path });
     },
 

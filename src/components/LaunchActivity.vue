@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="row">
-      <describe-activity :id="id" :activity="activity" v-if="dataloaded" />
+      <describe-activity :activity="activity" v-if="dataloaded" />
     </div>
     <div class="row">
       <div class="col bg-primary">
