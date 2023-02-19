@@ -23,16 +23,12 @@
 		</div>
 		</div>
 		<div class="col">
-		  <div class="dropup" v-if="enabled"> 
-				<button type="button" @click='getActivity()' class="btn btn-success" id="open">
+		  <div class="dropup"> 
+				<button type="button" @click='getActivity()' class="btn btn-success" id="open" :disabled="bookingNotStarted">
 				  Open <span class="caret"></span>
 				</button>
 		  </div>
-		  <div class="dropup" v-else="enabled"> 
-				<button type="button" class="btn btn-success" id="open" disabled>
-				  Open <span class="caret"></span>
-				</button>
-		  </div>
+		 
 		  
 		  </div>
 

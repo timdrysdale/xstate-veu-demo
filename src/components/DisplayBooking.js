@@ -1,10 +1,8 @@
 import dayjs from "dayjs/esm/index.js";
 import { ref } from "vue";
 import relativeTime from "dayjs/plugin/relativeTime";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useBookingService } from "./bookingMachine.js";
 dayjs.extend(relativeTime);
-dayjs.extend(isSameOrBefore);
 
 export default {
   props: ["booking"],
@@ -18,9 +16,9 @@ export default {
         }
       }
     },
-    enabled: function () {
+    bookingNotStarted: function () {
       if (this.booking) {
-        return this.start.isSameOrBefore(dayjs());
+        return dayjs().isBefore(this.start);
       }
     },
     title: function () {
