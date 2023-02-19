@@ -2,12 +2,12 @@
   <div class="row">
 <div class="col" />
 	<div class="col">
-	  	{{ response }}
+	  	{{ message }}
 	</div>
 	<div class="col">
 		<div class="dropup"> 
 				<button type="button" @click='back()' class="btn btn-warning" id="back">
-				  Go back to catalogue
+				  {{ next }} 
 				</button>
 
         </div>

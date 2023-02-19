@@ -33,6 +33,8 @@ const bookingMachine = createMachine({
   context: {
     activities: {},
     activityResponse: {},
+    bookingResponse: {},
+    cancelResponse: {},
     bookings: "",
     userName: "",
     token: "",
@@ -272,19 +274,20 @@ const bookingMachine = createMachine({
           token: (context, event) => context.token,
         },
         onDone: {
-          target: "bookingResponse", //nb this catches 404 so not booking success yet!
+          target: "refreshBookings", //nb this catches 404 so not booking success yet!
           actions: assign({
-            bookingResponse: (context, event) => {
+            cancelResponse: (context, event) => {
               console.log(event.data);
               return event.data;
             },
           }),
         },
         onError: {
-          target: "bookingError",
+          target: "idle",
           actions: assign({
-            bookingFailedReason: (context, event) => {
-              return event;
+            cancelResponse: (context, event) => {
+              console.log(event.data);
+              return event.data;
             },
           }),
         },
@@ -346,7 +349,16 @@ const bookingMachine = createMachine({
           token: (context, event) => context.token,
         },
         onDone: {
-          target: "bookingResponse", //nb this catches 404 so not booking success yet!
+          target: "refreshBookings", //nb this catches 404 so not booking success yet!
+          actions: assign({
+            bookingResponse: (context, event) => {
+              console.log("requestBooking success response", event.data);
+              return event.data;
+            },
+          }),
+        },
+        onError: {
+          target: "idle",
           actions: assign({
             bookingResponse: (context, event) => {
               console.log(event.data);
@@ -354,25 +366,10 @@ const bookingMachine = createMachine({
             },
           }),
         },
-        onError: {
-          target: "bookingError",
-          actions: assign({
-            bookingFailedReason: (context, event) => {
-              return event;
-            },
-          }),
-        },
       },
     },
 
     bookingError: {}, //consider going straight on to refreshBookings if successful
-    bookingResponse: {
-      on: {
-        BACK: {
-          target: "refreshBookings",
-        },
-      },
-    },
     bookingSuccess: {},
     bookingFailed: {},
     displayGroup: {},

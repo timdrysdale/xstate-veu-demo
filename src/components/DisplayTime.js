@@ -29,6 +29,9 @@ export default {
       };
       this.send({ type: "REQUESTBOOKING", value: booking });
       console.log("request booking for", booking, this.start, this.end);
+
+      var path = "/bookingResponse";
+      this.$router.push({ path: path });
     },
   },
   setup() {

@@ -11,6 +11,7 @@ export default createMachine(
       token: "",
       results: "FOO",
       retryCount: 0,
+      status: 0,
     },
     states: {
       loading: {
@@ -25,6 +26,7 @@ export default createMachine(
         data: (context, event) => ({
           results: context.results,
           result: "success",
+          status: context.status,
         }),
       },
       failure: {
@@ -49,6 +51,7 @@ export default createMachine(
         data: (context, event) => ({
           results: context.results,
           result: "terminated",
+          status: context.status,
         }),
       },
     },
@@ -63,6 +66,7 @@ export default createMachine(
           },
         })
           .then((res) => {
+            _context.status = res.status;
             console.log(res.status);
             if (res.status == 204) {
               // avoid parsing empty body on OK NO CONTENT response
