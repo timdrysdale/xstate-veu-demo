@@ -74,13 +74,6 @@ const bookingMachine = createMachine({
         },
       },
     },
-    activityResponse: {
-      on: {
-        BACK: {
-          target: "refreshBookings",
-        },
-      },
-    },
     bookings: {
       invoke: {
         src: fetchMachine,
@@ -311,19 +304,24 @@ const bookingMachine = createMachine({
           token: (context, event) => context.token,
         },
         onDone: {
-          target: "activityResponse", //nb this catches 404 so not booking success yet! //TODO go to activityResponse
+          target: "idle", //nb this catches 404 so not booking success yet! //TODO go to activityResponse
           actions: assign({
             activityResponse: (context, event) => {
-              context.activities[context.getActivity.name] = event.data; //TODO put map entry in own assign function?
+              //context.activities[context.getActivity.name] = event.data; //TODO put map entry in own assign function?
               console.log(event.data);
               return event.data;
+            },
+            activities: (context, event) => {
+              let a = context.activities;
+              a[context.getActivity.name] = event.data;
+              return a;
             },
           }),
         },
         onError: {
-          target: "bookingError", //TODO go to an activityError state?
+          target: "idle", //TODO go to an activityError state?
           actions: assign({
-            bookingFailedReason: (context, event) => {
+            activityFailedReason: (context, event) => {
               return event;
             },
           }),

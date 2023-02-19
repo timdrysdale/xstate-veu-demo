@@ -3,7 +3,5 @@
 </script>
 
 <template>
-  <KeepAlive>
 <Booking />
-</KeepAlive>
 </template>

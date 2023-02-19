@@ -34,14 +34,21 @@ export default {
   },
   methods: {
     getActivity() {
+      var path = "/activity/" + this.booking.name;
+
       this.send({ type: "GETACTIVITY", value: this.booking });
+
       console.log(
         "get activity for booking",
         this.booking.name,
         this.booking.slot
       );
+
+      this.$router.push({ path: path });
     },
+
     cancelBooking() {
+      // TODO have this open a separate routing to a cancel confirmation dialog (instead of a modal)
       this.send({ type: "CANCELBOOKING", value: this.booking });
       console.log("cancel booking", this.booking.name, this.booking.slot);
     },
