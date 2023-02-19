@@ -30,11 +30,17 @@ export default {
       return this.slot.description.further;
     },
     nextBookable: function () {
-      if (this.slot.available.length < 0) {
-        return "All available slots booked for just now, please check again later";
+      if (!this.slot.available) {
+        return "No free slots available to book.";
       }
-      let start = dayjs(this.slot.available[0].start);
-      return "Available " + start.fromNow();
+      if (this.slot.available.length < 0) {
+        return "No free slots available to book.";
+      }
+      if (this.slot.available[0]) {
+        let start = dayjs(this.slot.available[0].start);
+        return "Available " + start.fromNow();
+      }
+      return "No free slots available to book";
     },
     suggested: function () {
       let all = {};

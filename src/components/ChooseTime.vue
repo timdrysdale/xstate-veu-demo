@@ -1,6 +1,7 @@
 <template>
    <div class="container-fluid">
 	 <div class="row">
+	   <div class="col"></div>
         <div class="card mb-3" style="max-width: 540px;">
           <div class="row no-gutters">
             <div class="col-md-4">
@@ -20,10 +21,10 @@
           </div>
         </div>
 		</div>
-		
+		 <div class="col"></div>
 		<div class="row">
-		 
-<div>
+		  <div class="col"></div><div class="col">
+
 <display-times 
   v-for="(times,key) in suggested"
   :key="key"
@@ -31,10 +32,11 @@
   :times="times"
   :slot="slot">
 </display-times>
-</div>
+</div> <div class="col"></div>
 		</div>
 		
-    <div class="row ">
+		<div class="row ">
+		  <div class="col"></div>
 	<div class="col">
        Start:  <input v-model="start" placeholder="YYYY-MM-DDTHH:MM:SSZ">
     </div>
@@ -50,7 +52,7 @@
 	    </div>
      </div>
   </div>
-	 
+	 <div class="col"></div>
   <div class="row">
  
  		<div class="dropup"> 

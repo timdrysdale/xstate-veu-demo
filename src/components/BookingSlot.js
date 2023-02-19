@@ -22,6 +22,9 @@ export default {
       return this.description.further;
     },
     nextBookable: function () {
+      if (!this.available) {
+        return "No free slots available to book.";
+      }
       if (this.available.length < 1) {
         return "No free slots available to book.";
       }
