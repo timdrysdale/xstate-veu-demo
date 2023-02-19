@@ -1,5 +1,16 @@
-<script setup>
-  import Booking from './components/Booking.vue'
+<script>
+  import { defineComponent } from "vue";
+  import Booking from "./components/Booking.vue";
+  import { provideBookingService } from "./components/bookingMachine.js"
+
+
+  export default defineComponent({
+  components: { Booking },
+      setup() {
+          provideBookingService();
+      },
+  });
+  
 </script>
 
 <template>

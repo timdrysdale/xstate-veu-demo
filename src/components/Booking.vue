@@ -1,4 +1,58 @@
+<script>
+import { defineComponent } from "vue";
+import { useBookingService } from "./bookingMachine.js";
+
+import BookingSlots from "./BookingSlots.vue";
+import YourBookings from "./YourBookings.vue";
+import ChooseTime from "./ChooseTime.vue";
+import DisplayBookingResponse from "./DisplayBookingResponse.vue";
+import LaunchActivity from "./LaunchActivity.vue";
+
+export default defineComponent({
+name: "Booking",
+components: {
+    BookingSlots,
+    YourBookings,
+    ChooseTime,
+    DisplayBookingResponse,
+    LaunchActivity,
+},
+computed: {
+    filteredSlots() {
+      var filter = this.slotFilter.toLowerCase();
+      var items = context.slots;
+
+      items.sort((a, b) => (a.name > b.name ? 1 : -1));
+
+      if (filter == "") {
+        return items;
+      }
+      var results = items.filter((obj) => {
+        return obj.name.toLowerCase().includes(filter);
+      });
+
+      return results;
+    },
+    slotsComplete() {
+      console.log(context);
+      return { not: "implemented" };
+    },
+  },
+  setup() {
+    const { context, send } = useBookingService();
+    return {
+      context,
+      send,
+    };
+  },
+});
+</script>
+
 <template>
+<template v-if="true">
+{{ context }}
+</template>
+<template v-else>
   <template v-if="current.value === 'login'">
     <div>Logging in ...</div>
   </template> 
@@ -75,4 +129,5 @@
   </template>
   
 </template>
-<script src="./bookingMachine.js"></script>
+</template>
+<!--script src="./bookingMachine.js"></script-->

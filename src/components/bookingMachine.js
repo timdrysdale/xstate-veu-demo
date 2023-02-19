@@ -1,3 +1,7 @@
+import { inject, provide } from "vue";
+//import type { InjectionKey } from "vue"; //https://github.com/vuejs/core/issues/5697
+import { useActor, useInterpret } from "@xstate/vue";
+
 import {
   assign,
   createMachine,
@@ -16,11 +20,13 @@ import getGroupDetails from "./getGroupDetails.js";
 import getSlotAvailable from "./getSlotAvailable.js";
 import loginMachine from "./loginMachine.js";
 
+/*
 import BookingSlots from "./BookingSlots.vue";
 import YourBookings from "./YourBookings.vue";
 import ChooseTime from "./ChooseTime.vue";
 import DisplayBookingResponse from "./DisplayBookingResponse.vue";
 import LaunchActivity from "./LaunchActivity.vue";
+*/
 
 const bookingMachine = createMachine({
   id: "bookingMachine",
@@ -395,6 +401,8 @@ const bookingMachine = createMachine({
     },
 
 */
+
+/*
 export default {
   name: "Booking",
   components: {
@@ -457,3 +465,20 @@ export default {
     },
   },
 };
+*/
+// https://codesandbox.io/s/vg7qh?file=/src/SomeComponent.vue
+
+export function provideBookingService() {
+  const service = useInterpret(bookingMachine);
+  provide("bookingService", service);
+}
+
+export function useBookingService() {
+  const service = inject("bookingService");
+
+  if (!service) {
+    throw new Error("booking service not provided");
+  }
+
+  return useActor(service);
+}
