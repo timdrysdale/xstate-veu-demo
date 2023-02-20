@@ -68,7 +68,6 @@ const bookingMachine = createMachine({
           actions: assign({
             groupsQuery: (context, event) => {
               //save the groups from the query params
-              console.log("STARTUP event received", event.data);
               return event.data.groupNames;
             },
             sessionsQuery: (context, event) => {
@@ -96,7 +95,6 @@ const bookingMachine = createMachine({
           target: "login",
           actions: assign({
             groupNames: (context, event) => {
-              console.log("startupMachine returned", event.data);
               let g = [];
               if (context.groupNames && Array.isArray(context.groupNames)) {
                 g = context.groupNames; // allow the initial state of machine to contain some groups

@@ -1,7 +1,6 @@
 export default function (context, event) {
   return new Promise((resolve, reject) => {
     let slots = {};
-    console.log(context.slots);
 
     // we do some gymnastics to avoid a circular error cropping up later
     // when try to get a value of completedSlots
@@ -17,7 +16,7 @@ export default function (context, event) {
       slot.id = String(name); //store our key inside object for later use in subcomponents
       slots[name] = slot;
     }
-    // TODO handle an error here?
+
     return resolve({ status: "ok", slots: slots });
   });
 }

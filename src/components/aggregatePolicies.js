@@ -9,8 +9,6 @@ export default function (context, event) {
       }
     }
 
-    console.log("finished aggregating policies", policies);
-    // TODO handle error here
     return resolve({ status: "ok", policies: policies });
   });
 }

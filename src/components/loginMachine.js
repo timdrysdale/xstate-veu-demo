@@ -5,7 +5,7 @@ import addMultipleGroups from "./addMultipleGroups.js";
 const getUserLocally = (context, event) =>
   new Promise((resolve, reject) => {
     var userName = localStorage.getItem("userName", false);
-    console.log("userName", userName);
+
     if (userName == null) {
       return reject("no userName found");
     }
@@ -19,8 +19,6 @@ const getUserLocally = (context, event) =>
 const storeUserLocally = (context, event) =>
   new Promise((resolve, reject) => {
     var userName = localStorage.setItem("userName", context.userName);
-
-    console.log("stored userName", context.userName);
 
     return resolve();
   });

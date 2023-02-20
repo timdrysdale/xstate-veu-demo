@@ -8,8 +8,7 @@ export default function (context, event) {
         slots[slot] = policy.slots[slot];
       }
     }
-    console.log("finished aggregating slots", slots);
-    // TODO handle error here
+
     return resolve({ status: "ok", slots: slots });
   });
 }

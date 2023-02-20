@@ -7,8 +7,6 @@ export default defineComponent({
   components: {},
   computed: {},
   mounted() {
-    console.log("route.query", this.route.query);
-
     //repeated query param keys are mixing the results so don't do that
     let gn = ["g-everyone"]; //default group
     let sn = [];
@@ -34,18 +32,8 @@ export default defineComponent({
       groupNames: gn,
       sessionNames: sn,
     };
-    console.log("processed query", sg);
-
-    // this routing data is getting through ok - delete this test code
-    //console.log("substituting non-promise data to check event");
-    //sg = {
-    //  groupNames: ["made", "up"], //gn
-    //  sessionNames: ["for", "test"], //gn
-    //};
 
     this.send({ type: "STARTUP", data: sg });
-
-    console.log("sent event STARTUP", sg);
   },
   setup() {
     const { state, send } = useBookingService();
@@ -57,20 +45,3 @@ export default defineComponent({
     };
   },
 });
-
-/*
-
-import { defineComponent } from "vue";
-import { useBookingService } from "./bookingMachine.js";
-
-export default defineComponent({
-  name: "StartUp",
-  computed: {},
-  setup() {
-    const { state, send } = useBookingService();
-    return {
-      state,
-      send,
-    };
-  },
-});*/

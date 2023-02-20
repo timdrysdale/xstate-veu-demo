@@ -6,7 +6,7 @@ import { useRoute } from "vue-router";
 const getGroupsLocally = (context, event) =>
   new Promise((resolve, reject) => {
     var groupNames = JSON.parse(localStorage.getItem("groupNames", false));
-    console.log("groupsLocally", groupNames);
+
     if (groupNames == null) {
       return reject("no groupNames found");
     }
@@ -30,21 +30,15 @@ const storeGroupsLocally = (context, event) =>
 
     if (Array.isArray(context.groupsLocal)) {
       context.groupsLocal.forEach(Add);
-    } else {
-      console.log("groupsLocal not an array", context.groupsLocal);
     }
 
     if (Array.isArray(context.groupsQuery)) {
       context.groupsQuery.forEach(Add);
-    } else {
-      console.log("groupsQuery not an array", context.groupsQuery);
     }
 
     context.groupNames = groupNames;
 
     localStorage.setItem("groupNames", JSON.stringify(groupNames));
-
-    console.log("stored groupNames", groupNames);
 
     return resolve();
   });
@@ -52,7 +46,7 @@ const storeGroupsLocally = (context, event) =>
 const getSessionsLocally = (context, event) =>
   new Promise((resolve, reject) => {
     var sessionNames = JSON.parse(localStorage.getItem("sessionNames", false));
-    console.log("sessionsLocally", sessionNames);
+
     if (sessionNames == null) {
       return reject("no sessionNames found");
     }
@@ -66,7 +60,7 @@ const getSessionsLocally = (context, event) =>
 const storeSessionsLocally = (context, event) =>
   new Promise((resolve, reject) => {
     const sessionNames = [];
-    console.log("store sessions locally");
+
     function Add(item) {
       //deduplicate
       if (!sessionNames.includes(item)) {
@@ -76,21 +70,14 @@ const storeSessionsLocally = (context, event) =>
 
     if (Array.isArray(context.sessionsLocal)) {
       context.sessionsLocal.forEach(Add);
-    } else {
-      console.log("sessionsLocal not an array", context.sessionsLocal);
     }
 
     if (Array.isArray(context.sessionsQuery)) {
       context.sessionsQuery.forEach(Add);
-    } else {
-      console.log("sessionsQuery not an array", context.sessionsQuery);
     }
-
     context.sessionNames = sessionNames;
 
     localStorage.setItem("sessionNames", JSON.stringify(sessionNames));
-
-    console.log("stored sessionNames", sessionNames);
 
     return resolve();
   });
@@ -115,7 +102,6 @@ export default createMachine({
           target: "groupsLocal",
           actions: assign({
             groupsQuery: (context, event) => {
-              console.log("on QUERY", event.data);
               return event.data.groupNames;
             },
             sessionsQuery: (context, event) => {
@@ -133,7 +119,6 @@ export default createMachine({
           target: "storeGroups",
           actions: assign({
             groupsLocal: (context, event) => {
-              console.log("groupsLocal returned", event.data);
               return event.data.groupNames;
             },
           }),

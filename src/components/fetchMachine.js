@@ -67,7 +67,6 @@ export default createMachine(
         })
           .then((res) => {
             _context.status = res.status;
-            console.log(res.status);
             if (res.status == 204) {
               // avoid parsing empty body on OK NO CONTENT response
               return;
