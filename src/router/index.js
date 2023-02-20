@@ -7,6 +7,7 @@ import CancelConfirm from "../views/CancelConfirm.vue";
 import Home from "../views/Home.vue";
 import NotFound from "../views/NotFound.vue";
 import Slot from "../views/Slot.vue";
+import User from "../views/User.vue";
 
 const routes = [
   {
@@ -38,6 +39,11 @@ const routes = [
     path: "/slot/:id",
     name: "Slot",
     component: Slot,
+  },
+  {
+    path: "/user",
+    name: "User",
+    component: User,
   },
   {
     path: "/:catchAll(.*)",

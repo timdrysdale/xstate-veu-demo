@@ -194,13 +194,13 @@ const bookingMachine = createMachine({
           target: "groups",
           actions: assign({
             bookings: (context, event) => {
-              console.log("getSessionBookings returned", event.data);
-              console.log("TODO add session bookings to context.bookings");
-
               let bk = context.bookings;
-              for (const b in event.data.bookings) {
-                console.log(b);
-                event.data.bookings[b].bookings.forEach(function (booking) {
+              for (const session in event.data.bookings) {
+                event.data.bookings[session].bookings.forEach(function (
+                  booking
+                ) {
+                  booking.isSession = true;
+                  booking.session = session;
                   bk.push(booking);
                 });
               }
@@ -228,7 +228,7 @@ const bookingMachine = createMachine({
           token: (context, event) => context.token,
         },
         onDone: {
-          target: "idle",
+          target: "refreshSessions",
           actions: assign({
             bookings: (context, event) => {
               return event.data.results;
@@ -240,7 +240,36 @@ const bookingMachine = createMachine({
         },
       },
     },
+    refreshSessions: {
+      invoke: {
+        src: getSessionBookings,
+        onDone: {
+          target: "idle",
+          actions: assign({
+            bookings: (context, event) => {
+              console.log("getSessionBookings returned", event.data);
+              console.log("TODO add session bookings to context.bookings");
 
+              let bk = context.bookings;
+              for (const session in event.data.bookings) {
+                event.data.bookings[session].bookings.forEach(function (
+                  booking
+                ) {
+                  booking.isSession = true;
+                  booking.session = session;
+                  bk.push(booking);
+                });
+              }
+
+              return bk;
+            },
+          }),
+        },
+        onError: {
+          target: "terminated",
+        },
+      },
+    },
     groups: {
       invoke: {
         src: getGroupDetails,

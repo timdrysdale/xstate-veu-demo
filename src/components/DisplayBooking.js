@@ -56,6 +56,16 @@ export default {
         return dayjs(this.booking.when.end);
       }
     },
+    isSession: function () {
+      if (this.booking) {
+        return this.booking.isSession === true;
+      }
+    },
+    session: function () {
+      if (this.booking) {
+        return this.booking.session;
+      }
+    },
   },
   data() {
     return {
@@ -92,7 +102,6 @@ export default {
       this.now = dayjs();
       console.log("updated now for booking");
     }, wait.asMilliseconds());
-    console.log(wait);
   },
   setup() {
     const { state, send } = useBookingService();

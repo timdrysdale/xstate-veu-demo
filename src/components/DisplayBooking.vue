@@ -17,7 +17,7 @@
 		<div class="row">
 		  		<div class="col">
 		<div class="dropup"> 
-				<button type="button" @click='cancelBooking()' class="btn btn-danger" id="book">
+				<button type="button" @click='cancelBooking()' class="btn btn-danger" id="book" :disabled="isSession">
 				  Cancel <span class="caret"></span>
 				</button>
 		</div>
@@ -36,7 +36,8 @@
 		</div>
 		
 	</div>
-  </div>	  
+  </div>
+  <div v-if="isSession"> <p class="card-text text-secondary">Only an admin can cancel this booking for {{ session }}</p></div>
   </div>
 
 

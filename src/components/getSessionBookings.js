@@ -4,7 +4,7 @@ import { interpret } from "xstate";
 export default function (context, event) {
   let promises = [];
   let names = [];
-  console.log("sessionBookings", context.sessionNames);
+
   context.sessionNames.forEach(function (session) {
     names.push(session);
     promises.push(
