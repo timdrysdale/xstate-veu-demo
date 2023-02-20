@@ -29,7 +29,7 @@ import LaunchActivity from "./LaunchActivity.vue";
 
 const bookingMachine = createMachine({
   id: "bookingMachine",
-  initial: "getQuery",
+  initial: "ready",
   context: {
     activities: {},
     activityResponse: {},
@@ -58,7 +58,23 @@ const bookingMachine = createMachine({
   },
   predictableActionArguments: true,
   states: {
-    getQuery: {
+    ready: {
+      on: {
+        STARTUP: {
+          target: "startUp",
+          actions: assign({
+            groupsQuery: (context, event) => {
+              console.log(event.data);
+              return event.data.groupNames;
+            },
+            sessionsQuery: (context, event) => {
+              return event.data.sessionNames;
+            },
+          }),
+        },
+      },
+    },
+    startUp: {
       invoke: {
         src: startUpMachine,
         onDone: {

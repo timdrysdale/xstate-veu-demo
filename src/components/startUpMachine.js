@@ -3,25 +3,6 @@ import { inject, provide } from "vue";
 import { useActor, useInterpret } from "@xstate/vue";
 import { useRoute } from "vue-router";
 
-const getGroupsFromQuery = (context, event) =>
-  new Promise((resolve, reject) => {
-    var groupNames = ["todo", "bar"];
-
-    //const route = useRoute();
-    //console.log("get groups from query", route.query);
-
-    console.log("groupsQuery", groupNames);
-
-    if (groupNames == null) {
-      return reject("no groupNames found");
-    }
-    if (groupNames == "") {
-      return reject("no groupNames found");
-    }
-
-    return resolve({ status: "ok", groupNames: groupNames });
-  });
-
 const getGroupsLocally = (context, event) =>
   new Promise((resolve, reject) => {
     var groupNames = localStorage.getItem("groupNames", false);
@@ -68,21 +49,6 @@ const storeGroupsLocally = (context, event) =>
     console.log("stored groupNames", groupNames);
 
     return resolve();
-  });
-
-const getSessionsFromQuery = (context, event) =>
-  new Promise((resolve, reject) => {
-    var sessionNames = ["todo", "bar"];
-    console.log("sessionsQuery", sessionNames);
-
-    if (sessionNames == null) {
-      return reject("no sessionNames found");
-    }
-    if (sessionNames == "") {
-      return reject("no sessionNames found");
-    }
-
-    return resolve({ status: "ok", sessionNames: sessionNames });
   });
 
 const getSessionsLocally = (context, event) =>
@@ -133,7 +99,7 @@ const storeSessionsLocally = (context, event) =>
 
 export default createMachine({
   id: "startUpMachine",
-  initial: "groupsQuery",
+  initial: "groupsLocal",
   context: {
     groupsQuery: [],
     groupsLocal: [],
@@ -145,19 +111,18 @@ export default createMachine({
   devTools: true,
   predictableActionArguments: true,
   states: {
-    groupsQuery: {
-      invoke: {
-        src: getGroupsFromQuery,
-        onDone: {
+    wait: {
+      on: {
+        QUERY: {
           target: "groupsLocal",
           actions: assign({
             groupsQuery: (context, event) => {
               return event.data.groupNames;
             },
+            sessionsQuery: (context, event) => {
+              return event.data.sessionNames;
+            },
           }),
-        },
-        onError: {
-          target: "groupsLocal",
         },
       },
     },
@@ -183,23 +148,7 @@ export default createMachine({
       invoke: {
         src: storeGroupsLocally,
         onDone: {
-          target: "sessionsQuery",
-        },
-        onError: {
-          target: "sessionsQuery",
-        },
-      },
-    },
-    sessionsQuery: {
-      invoke: {
-        src: getSessionsFromQuery,
-        onDone: {
           target: "sessionsLocal",
-          actions: assign({
-            sessionsQuery: (context, event) => {
-              return event.data.sessionNames;
-            },
-          }),
         },
         onError: {
           target: "sessionsLocal",
