@@ -19,6 +19,7 @@ import getGroupDetails from "./getGroupDetails.js";
 import getSlotAvailable from "./getSlotAvailable.js";
 import loginMachine from "./loginMachine.js";
 import startUpMachine from "./startUpMachine.js";
+import getSessionBookings from "./getSessionBookings.js";
 /*
 import BookingSlots from "./BookingSlots.vue";
 import YourBookings from "./YourBookings.vue";
@@ -174,7 +175,7 @@ const bookingMachine = createMachine({
           token: (context, event) => context.token,
         },
         onDone: {
-          target: "groups",
+          target: "sessions",
           actions: assign({
             bookings: (context, event) => {
               return event.data.results;
@@ -186,6 +187,34 @@ const bookingMachine = createMachine({
         },
       },
     },
+    sessions: {
+      invoke: {
+        src: getSessionBookings,
+        onDone: {
+          target: "groups",
+          actions: assign({
+            bookings: (context, event) => {
+              console.log("getSessionBookings returned", event.data);
+              console.log("TODO add session bookings to context.bookings");
+
+              let bk = context.bookings;
+              for (const b in event.data.bookings) {
+                console.log(b);
+                event.data.bookings[b].bookings.forEach(function (booking) {
+                  bk.push(booking);
+                });
+              }
+
+              return bk;
+            },
+          }),
+        },
+        onError: {
+          target: "terminated",
+        },
+      },
+    },
+
     refreshBookings: {
       invoke: {
         src: fetchMachine,
