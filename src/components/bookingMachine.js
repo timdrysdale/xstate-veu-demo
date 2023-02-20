@@ -43,8 +43,11 @@ const bookingMachine = createMachine({
     group: null, //name of currently selected group
     groupDetails: {}, //subMachines see https://xstate.js.org/docs/tutorials/reddit.html#spawning-subreddit-actors
     groupNames: [], // set by the LOGIN event, event sender must include any default group
+    groupsQuery: [],
+
     policies: {},
     sessionNames: {}, //usernames that we will access bookings for, but not cancel bookings or do new bookings with
+    sessionsQuery: [],
     slots: [],
     status: {
       startup: true, //will get removed (become undefined) when we get an actual status
@@ -64,10 +67,12 @@ const bookingMachine = createMachine({
           target: "startUp",
           actions: assign({
             groupsQuery: (context, event) => {
-              console.log(event.data);
+              //save the groups from the query params
+              console.log("STARTUP event received", event.data);
               return event.data.groupNames;
             },
             sessionsQuery: (context, event) => {
+              //save the sessions from the query params
               return event.data.sessionNames;
             },
           }),
@@ -77,6 +82,16 @@ const bookingMachine = createMachine({
     startUp: {
       invoke: {
         src: startUpMachine,
+        data: {
+          groupsQuery: (context, event) => {
+            // put in the groups from the query params
+            return context.groupsQuery;
+          },
+          sessionsQuery: (context, event) => {
+            // put in the session from the query params
+            return context.sessionsQuery;
+          },
+        },
         onDone: {
           target: "login",
           actions: assign({

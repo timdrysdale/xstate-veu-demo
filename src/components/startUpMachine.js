@@ -5,7 +5,7 @@ import { useRoute } from "vue-router";
 
 const getGroupsLocally = (context, event) =>
   new Promise((resolve, reject) => {
-    var groupNames = localStorage.getItem("groupNames", false);
+    var groupNames = JSON.parse(localStorage.getItem("groupNames", false));
     console.log("groupsLocally", groupNames);
     if (groupNames == null) {
       return reject("no groupNames found");
@@ -20,8 +20,6 @@ const getGroupsLocally = (context, event) =>
 const storeGroupsLocally = (context, event) =>
   new Promise((resolve, reject) => {
     const groupNames = [];
-
-    console.log("store sessions locally");
 
     function Add(item) {
       //deduplicate
@@ -44,7 +42,7 @@ const storeGroupsLocally = (context, event) =>
 
     context.groupNames = groupNames;
 
-    localStorage.setItem("groupNames", groupNames);
+    localStorage.setItem("groupNames", JSON.stringify(groupNames));
 
     console.log("stored groupNames", groupNames);
 
@@ -53,7 +51,7 @@ const storeGroupsLocally = (context, event) =>
 
 const getSessionsLocally = (context, event) =>
   new Promise((resolve, reject) => {
-    var sessionNames = localStorage.getItem("sessionNames", false);
+    var sessionNames = JSON.parse(localStorage.getItem("sessionNames", false));
     console.log("sessionsLocally", sessionNames);
     if (sessionNames == null) {
       return reject("no sessionNames found");
@@ -90,7 +88,7 @@ const storeSessionsLocally = (context, event) =>
 
     context.sessionNames = sessionNames;
 
-    localStorage.setItem("sessionNames", sessionNames);
+    localStorage.setItem("sessionNames", JSON.stringify(sessionNames));
 
     console.log("stored sessionNames", sessionNames);
 
@@ -117,6 +115,7 @@ export default createMachine({
           target: "groupsLocal",
           actions: assign({
             groupsQuery: (context, event) => {
+              console.log("on QUERY", event.data);
               return event.data.groupNames;
             },
             sessionsQuery: (context, event) => {
@@ -134,6 +133,7 @@ export default createMachine({
           target: "storeGroups",
           actions: assign({
             groupsLocal: (context, event) => {
+              console.log("groupsLocal returned", event.data);
               return event.data.groupNames;
             },
           }),
