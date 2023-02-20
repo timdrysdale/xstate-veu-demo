@@ -18,7 +18,7 @@ import fetchMachine from "./fetchMachine.js";
 import getGroupDetails from "./getGroupDetails.js";
 import getSlotAvailable from "./getSlotAvailable.js";
 import loginMachine from "./loginMachine.js";
-
+import startUpMachine from "./startUpMachine.js";
 /*
 import BookingSlots from "./BookingSlots.vue";
 import YourBookings from "./YourBookings.vue";
@@ -29,7 +29,7 @@ import LaunchActivity from "./LaunchActivity.vue";
 
 const bookingMachine = createMachine({
   id: "bookingMachine",
-  initial: "login",
+  initial: "getQuery",
   context: {
     activities: {},
     activityResponse: {},
@@ -42,9 +42,15 @@ const bookingMachine = createMachine({
     groups: {}, //groups we can choose from (includes description)
     group: null, //name of currently selected group
     groupDetails: {}, //subMachines see https://xstate.js.org/docs/tutorials/reddit.html#spawning-subreddit-actors
+    groupNames: [], // set by the LOGIN event, event sender must include any default group
     policies: {},
+    sessionNames: {}, //usernames that we will access bookings for, but not cancel bookings or do new bookings with
     slots: [],
-    status: {},
+    status: {
+      startup: true, //will get removed (become undefined) when we get an actual status
+      locked: true,
+      message: " Configuring and checking for system access .... ",
+    },
     available: {},
     completeSlots: {},
     slotSelected: "",
@@ -52,12 +58,60 @@ const bookingMachine = createMachine({
   },
   predictableActionArguments: true,
   states: {
+    getQuery: {
+      invoke: {
+        src: startUpMachine,
+        onDone: {
+          target: "login",
+          actions: assign({
+            groupNames: (context, event) => {
+              console.log("startupMachine returned", event.data);
+              let g = [];
+              if (context.groupNames && Array.isArray(context.groupNames)) {
+                g = context.groupNames; // allow the initial state of machine to contain some groups
+              }
+              // expect an array
+              if (event.data.hasOwnProperty("groupNames")) {
+                if (Array.isArray(event.data.groupNames)) {
+                  event.data.groupNames.forEach(function (item) {
+                    g.push(item);
+                  });
+                }
+              }
+              return g;
+            },
+            sessionNames: (context, event) => {
+              let s = [];
+              if (context.sessionNames && Array.isArray(context.sessionNames)) {
+                s = context.sessionNames; // allow the initial state of machine to contain some sessions
+              }
+              // expect an array
+              if (event.data.hasOwnProperty("sessionNames")) {
+                if (Array.isArray(event.data.sessionNames)) {
+                  event.data.sessionNames.forEach(function (item) {
+                    s.push(item);
+                  });
+                }
+              }
+              return s;
+            },
+          }),
+
+          onError: {
+            target: "login", //try logging in anyway!
+          },
+        },
+      },
+    },
     login: {
       invoke: {
         src: loginMachine,
         data: {
-          defaultGroup: "g-everyone",
-          secondGroup: "g-engdes1-lab", //TODO get from query rather than hardcoding
+          groupNames: (context, event) => {
+            return context.groupNames; // component that sends LOGIN event responsible for including defaultGroup
+            // this makes it easier for someone maintaining the code to change default group without touching the
+            // xstate machine code
+          },
         },
         onDone: {
           target: "status",
@@ -488,7 +542,7 @@ export default {
 // https://codesandbox.io/s/vg7qh?file=/src/SomeComponent.vue
 
 export function provideBookingService() {
-  const service = useInterpret(bookingMachine);
+  const service = useInterpret(bookingMachine, { devTools: true });
   provide("bookingService", service);
 }
 

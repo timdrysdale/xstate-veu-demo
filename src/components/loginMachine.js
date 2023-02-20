@@ -1,5 +1,6 @@
 import { assign, createMachine } from "xstate";
 import fetchMachine from "./fetchMachine.js";
+import addMultipleGroups from "./addMultipleGroups.js";
 
 const getUserLocally = (context, event) =>
   new Promise((resolve, reject) => {
@@ -28,14 +29,13 @@ export default createMachine({
   id: "loginMachine",
   initial: "userLocal",
   context: {
-    secondGroup: "",
     userLocal: "-",
     userRemote: "-",
     userName: "not known",
     login: "-",
     groups: "-",
-    defaultGroup: "",
-    defaultGroupAddedStatus: undefined,
+    groupNames: [],
+    groupsAddedStatus: undefined,
   },
   predictableActionArguments: true,
   states: {
@@ -108,7 +108,7 @@ export default createMachine({
 
         devTools: true,
         onDone: {
-          target: "addDefaultGroup",
+          target: "addGroups",
           actions: assign({
             login: (context, event) => {
               return event.data;
@@ -119,6 +119,27 @@ export default createMachine({
           }),
         },
         onError: {},
+      },
+    },
+    addGroups: {
+      invoke: {
+        src: addMultipleGroups,
+        onDone: {
+          target: "groups",
+          actions: assign({
+            groupsAddedStatus: (context, event) => {
+              return event.data.value;
+            },
+          }),
+        },
+        onError: {
+          target: "noGroups",
+          actions: assign({
+            groupsAddedStatus: (context, event) => {
+              return event.data.value;
+            },
+          }),
+        },
       },
     },
     groups: {
@@ -143,84 +164,9 @@ export default createMachine({
           }),
         },
         onError: {
-          target: "addDefaultGroup",
-        },
-      },
-    },
-    addDefaultGroup: {
-      invoke: {
-        src: fetchMachine,
-        data: {
-          id: "addDefaultGroup",
-          path: (context, event) =>
-            import.meta.env.VITE_APP_BOOK_SERVER +
-            "/api/v1/users/" +
-            context.userName +
-            "/groups/" +
-            context.defaultGroup,
-          method: "POST",
-          token: (context, event) => context.token,
-        },
-        devTools: true,
-        onDone: {
-          target: "addSecondGroup",
-          actions: assign({
-            defaultGroupAddedStatus: (context, event) => {
-              return true;
-            },
-          }),
-        },
-        onError: {
           target: "noGroups",
-          actions: assign({
-            defaultGroupAddedStatus: (context, event) => {
-              return false;
-            },
-          }),
         },
       },
-    },
-    addSecondGroup: {
-      invoke: {
-        src: fetchMachine,
-        data: {
-          id: "addSecondGroup",
-          path: (context, event) =>
-            import.meta.env.VITE_APP_BOOK_SERVER +
-            "/api/v1/users/" +
-            context.userName +
-            "/groups/" +
-            context.secondGroup,
-          method: "POST",
-          token: (context, event) => context.token,
-        },
-        devTools: true,
-        onDone: {
-          target: "groups",
-          actions: assign({
-            defaultGroupAddedStatus: (context, event) => {
-              return true;
-            },
-          }),
-        },
-        onError: {
-          target: "noGroups",
-          actions: assign({
-            defaultGroupAddedStatus: (context, event) => {
-              return false;
-            },
-          }),
-        },
-      },
-    },
-
-    noFuture: {
-      //can't store user locally so future bookings might be lost
-      type: "final",
-    },
-    noGroups: {
-      // no groups, so nothing can be booked at the moment - need to add groups
-      type: "final",
     },
     loginDone: {
       type: "final",
@@ -229,6 +175,14 @@ export default createMachine({
         token: context.token,
         groups: context.groups,
       }),
+    },
+    noFuture: {
+      //can't store user locally so future bookings might be lost
+      type: "final",
+    },
+    noGroups: {
+      // no groups, so nothing can be booked at the moment - need to add groups
+      type: "final",
     },
   },
 });

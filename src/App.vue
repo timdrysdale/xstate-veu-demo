@@ -3,8 +3,7 @@
   import Booking from "./components/Booking.vue";
   import { provideBookingService } from "./components/bookingMachine.js"
 
-
-  export default defineComponent({
+export default defineComponent({
   components: { Booking },
       setup() {
           provideBookingService();

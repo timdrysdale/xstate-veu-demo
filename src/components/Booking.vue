@@ -8,6 +8,7 @@ import ChooseTime from "./ChooseTime.vue";
 import DisplayBookingResponse from "./DisplayBookingResponse.vue";
 import LaunchActivity from "./LaunchActivity.vue";
 import Status from "./Status.vue";
+import StartUp from "./StartUp.vue";
 
 export default defineComponent({
 name: "Booking",
@@ -18,6 +19,7 @@ components: {
     DisplayBookingResponse,
     LaunchActivity,
 	Status,
+	StartUp,
 },
 computed: {
     filteredSlots() {
@@ -51,7 +53,15 @@ computed: {
 </script>
 
 <template>
+
+  <start-up />
   
+ <template v-if="state.context.status.locked">
+	<status />
+ </template>
+ 
+<template v-else>
+	  
   <template v-if="state.value === 'login'">
     <div>Logging in ...</div>
   </template>
@@ -59,12 +69,7 @@ computed: {
   <template v-if="state.value === 'bookings'">
     <div>Getting bookings ...</div>
   </template>
-
-  <template v-else>
-
-	<template v-if="state.context.status.locked">
-	<status />
-  </template>
+	  
   <template v-else>
 	<status />
 	<your-bookings></your-bookings >
